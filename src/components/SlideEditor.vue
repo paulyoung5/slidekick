@@ -25,26 +25,22 @@
 
 <template>
   <div class="app">
-    <top-bar :title="title"></top-bar>
+    <top-bar></top-bar>
 
-    <slides-toolbar :selected.sync="selectedSlideIndex" :slides="slides"></slides-toolbar>
+    <slides-toolbar></slides-toolbar>
 
     <toolbox></toolbox>
 
-    <inspector :slide="currentSlide" :selected-element-index="selectedElementIndex"></inspector>
+    <inspector></inspector>
 
-    <slide-controls :zoom-level.sync="zoomLevel"></slide-controls>
+    <slide-controls></slide-controls>
 
-    <current-slide
-      :slide="currentSlide"
-      :selected-element-index="selectedElementIndex"
-      :zoom-level="zoomLevel"
-      :inspect="inspectElement"
-    ></current-slide>
+    <current-slide></current-slide>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TopBar from './TopBar.vue'
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
@@ -62,41 +58,15 @@ export default {
     'slide-controls': SlideControls,
     'current-slide': CurrentSlide
   },
-  data () {
-    return {
-      selectedSlideIndex: 0,
-      zoomLevel: 1,
-      selectedElementIndex: -1,
-
-      title: 'My first presentation',
-      slides: [
-        {
-          backgroundColour: '#FFFFFF',
-          elements: [
-            {
-              id: 0,
-              type: 'TEXT',
-              properties: {
-                x: '100px',
-                y: '100px',
-                fontFamily: 'Verdana',
-                fontSize: 30,
-                content: 'Slide 1'
-              }
-            }
-          ]
-        }
-      ]
-    }
+  created () {
+    this.$store.dispatch('fetchPresentation')
   },
   computed: {
-    currentSlide () {
-      return this.slides[this.selectedSlideIndex]
-    }
+    ...mapGetters(['currentSlide', 'selectedElementIndex'])
   },
   methods: {
     inspectElement (index) {
-      this.selectedElementIndex = index
+      this.$store.commit('setSelectedElementIndex', index)
     }
   }
 }

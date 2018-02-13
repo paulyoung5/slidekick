@@ -80,20 +80,22 @@
 
 <template>
     <ul class="slides-toolbar">
-      <li v-for="(slide, i) in slides" :key="i" :class="{'selected': selected === i}" @click="select(i)">
-        <a href="#" @click="select(i)">[slide {{ i + 1 }}]</a>
+      <li v-for="(slide, i) in slides" :key="i" :class="{'selected': selectedSlideIndex === i}">
+        <a href="#" @click="selectSlideFromList(i)">[slide {{ i + 1 }}]</a>
       </li>
     </ul>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'slides-toolbar',
-  props: {selected: Number, slides: Array},
+  computed: {
+    ...mapGetters(['slides', 'selectedSlideIndex'])
+  },
   methods: {
-    select (index) {
-      this.$emit('update:selected', index)
-    }
+    ...mapActions(['selectSlideFromList'])
   }
 }
 </script>

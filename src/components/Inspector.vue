@@ -74,14 +74,14 @@
 
 <template>
   <div class="inspector">
-    <div class="section" v-if="!selectedElement">
+    <div class="section" v-if="!currentElement">
       <div class="header">
         <span>PROPERTIES</span>
         <a href="#"><i class="material-icons">arrow_drop_down</i></a>
       </div>
 
       <div class="options">
-      <label>Background</label> <input type="color" v-model="slide.backgroundColour">
+      <label>Background</label> <input type="color" :value="backgroundColour" @input="updateBackgroundColour">
       </div>
     </div>
 
@@ -92,24 +92,29 @@
       </div>
 
       <div class="options">
-        <label>X</label> <input type="text" v-model="selectedElement.properties.x">
-        <label>Y</label> <input type="text" v-model="selectedElement.properties.y">
+        <label>X</label> <input type="text" v-model="coordinates.x">
+        <label>Y</label> <input type="text" v-model="coordinates.y">
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'inspector',
-  props: {slide: Object, selectedElementIndex: Number},
   computed: {
-    selectedElement () {
-      return (this.slide.elements.length &&
-              this.selectedElementIndex >= 0)
-        ? this.slide.elements.find(el => el.id === this.selectedElementIndex)
-        : null
+    ...mapGetters(['currentSlide', 'currentElement']),
+    backgroundColour () {
+      return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
+    },
+    coordinates () {
+      return this.currentElement ? {x: this.currentElement.properties.x, y: this.currentElement.properties.y} : {x: 0, y: 0}
     }
+  },
+  methods: {
+    ...mapActions(['updateBackgroundColour'])
   }
 }
 </script>
