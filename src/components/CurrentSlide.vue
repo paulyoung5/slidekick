@@ -54,45 +54,33 @@
         v-for="textElement in textElements"
         :key="textElement.id"
         :element="textElement"
-        @inspect="inspect(textElement)"
       ></text-element>
     </svg>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import TextElement from './slide-elements/TextElement'
 
 export default {
   name: 'current-slide',
-  props: {zoomLevel: Number, slide: Object, selectedElementIndex: Number},
   components: {
     'text-element': TextElement
   },
   computed: {
-    selectedElement () {
-      return (this.slide.elements.length &&
-              this.selectedElementIndex >= 0)
-        ? this.slide.elements.find(el => el.id === this.selectedElementIndex)
-        : null
-    },
+    ...mapGetters(['currentSlide', 'currentElement', 'zoomLevel']),
     textElements () {
-      return this.slide.elements.filter(el => el.type === 'TEXT')
+      return this.currentSlide ? this.currentSlide.elements.filter(el => el.type === 'TEXT') : []
     },
     imageElements () {
-      return this.slide.elements.filter(el => el.type === 'IMAGE')
+      return this.currentSlide ? this.currentSlide.elements.filter(el => el.type === 'IMAGE') : []
     },
     slideProperties () {
       return {
         '--canvas-zoom-level': this.zoomLevel,
-        '--canvas-background-colour': this.slide.backgroundColour
+        '--canvas-background-colour': this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
       }
-    }
-  },
-  methods: {
-    inspect (element) {
-      console.log('inspect called from currentslide')
-      this.$emit('inspect', element.id)
     }
   }
 }
