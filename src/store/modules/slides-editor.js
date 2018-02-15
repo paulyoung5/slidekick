@@ -1,7 +1,10 @@
+import api from '../../api/presentation'
+
 const state = {
-  selectedSlideIndex: -1,
+  selectedSlideIndex: 0,
   zoomLevel: 1,
   selectedElementIndex: -1,
+  editorLoading: true,
 
   title: '',
   slides: []
@@ -28,34 +31,22 @@ const getters = {
   },
   title: state => state.title,
   slides: state => state.slides,
-  zoomLevel: state => state.zoomLevel
+  zoomLevel: state => state.zoomLevel,
+  editorLoading: state => state.editorLoading
 }
 
 const actions = {
-  fetchPresentation ({commit}) {
-    // At this point, get the presentation data from mongodb! we can then update the state
-    commit('setTitle', 'First ever presentation!')
+  async fetchPresentation ({commit}) {
+    try {
+      // At this point, get the presentation data from mongodb! we can then update the state
+      const {title, slides} = await api.getPresentation(0)
 
-    commit('setSlides', [
-      {
-        backgroundColour: '#FFFFFF',
-        elements: [
-          {
-            id: 0,
-            type: 'TEXT',
-            properties: {
-              x: '100px',
-              y: '100px',
-              fontFamily: 'Verdana',
-              fontSize: 30,
-              content: 'Slide 1'
-            }
-          }
-        ]
-      }
-    ])
-
-    commit('setSelectedSlideIndex', 0)
+      commit('setTitle', title)
+      commit('setSlides', slides)
+      commit('setEditorLoading', false)
+    } catch (error) {
+      console.error(error)
+    }
   },
 
   zoomIn ({commit}) {
@@ -90,6 +81,10 @@ const mutations = {
 
   setSelectedSlideIndex (state, selectedIndex) {
     state.selectedSlideIndex = selectedIndex
+  },
+
+  setEditorLoading (state, editorLoading) {
+    state.editorLoading = editorLoading
   },
 
   zoomIn (state) {
