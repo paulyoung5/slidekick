@@ -11,6 +11,31 @@
   overflow: hidden;
 }
 
+.loading-overlay {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 2em;
+
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 @media (max-width: 800px) {
   .app {
       grid-template-columns: 1fr;
@@ -25,6 +50,12 @@
 
 <template>
   <div class="app">
+    <transition name="fade">
+      <div class="loading-overlay" v-if="editorLoading">
+        Loading presentation..
+      </div>
+    </transition>
+
     <top-bar></top-bar>
 
     <slides-toolbar></slides-toolbar>
@@ -62,7 +93,7 @@ export default {
     this.$store.dispatch('fetchPresentation')
   },
   computed: {
-    ...mapGetters(['currentSlide', 'selectedElementIndex'])
+    ...mapGetters(['currentSlide', 'selectedElementIndex', 'editorLoading'])
   },
   methods: {
     inspectElement (index) {
