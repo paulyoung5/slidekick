@@ -21,7 +21,7 @@
       :font-family="fontFamily"
       :font-size="fontSize"
       @mousedown="mousedown"
-      @click="inspect"
+      @click="inspectElement(element.id)"
     >
       {{ content }}
     </text>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
+
 export default {
   name: 'text-element',
   props: {element: Object},
@@ -86,9 +88,7 @@ export default {
     }
   },
   methods: {
-    inspect () {
-      this.$emit('inspect')
-    },
+    ...mapActions(['inspectElement']),
     mousedown (event) {
       const svgEl = document.querySelector('svg')
 
