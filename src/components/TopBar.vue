@@ -76,8 +76,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'top-bar',
-  props: {title: String}
+  computed: {
+    ...mapGetters(['title'])
+  }
 }
 </script>

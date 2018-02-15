@@ -11,6 +11,31 @@
   overflow: hidden;
 }
 
+.loading-overlay {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 2em;
+
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 @media (max-width: 800px) {
   .app {
       grid-template-columns: 1fr;
@@ -25,26 +50,28 @@
 
 <template>
   <div class="app">
-    <top-bar :title="title"></top-bar>
+    <transition name="fade">
+      <div class="loading-overlay" v-if="editorLoading">
+        Loading presentation..
+      </div>
+    </transition>
 
-    <slides-toolbar :selected.sync="selectedSlideIndex" :slides="slides"></slides-toolbar>
+    <top-bar></top-bar>
+
+    <slides-toolbar></slides-toolbar>
 
     <toolbox></toolbox>
 
-    <inspector :slide="currentSlide" :selected-element-index="selectedElementIndex"></inspector>
+    <inspector></inspector>
 
-    <slide-controls :zoom-level.sync="zoomLevel"></slide-controls>
+    <slide-controls></slide-controls>
 
-    <current-slide
-      :slide="currentSlide"
-      :selected-element-index="selectedElementIndex"
-      :zoom-level="zoomLevel"
-      :inspect="inspectElement"
-    ></current-slide>
+    <current-slide></current-slide>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import TopBar from './TopBar.vue'
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
@@ -62,41 +89,15 @@ export default {
     'slide-controls': SlideControls,
     'current-slide': CurrentSlide
   },
-  data () {
-    return {
-      selectedSlideIndex: 0,
-      zoomLevel: 1,
-      selectedElementIndex: -1,
-
-      title: 'My first presentation',
-      slides: [
-        {
-          backgroundColour: '#FFFFFF',
-          elements: [
-            {
-              id: 0,
-              type: 'TEXT',
-              properties: {
-                x: '100px',
-                y: '100px',
-                fontFamily: 'Verdana',
-                fontSize: 30,
-                content: 'Slide 1'
-              }
-            }
-          ]
-        }
-      ]
-    }
+  created () {
+    this.$store.dispatch('fetchPresentation')
   },
   computed: {
-    currentSlide () {
-      return this.slides[this.selectedSlideIndex]
-    }
+    ...mapGetters(['currentSlide', 'selectedElementIndex', 'editorLoading'])
   },
   methods: {
     inspectElement (index) {
-      this.selectedElementIndex = index
+      this.$store.commit('setSelectedElementIndex', index)
     }
   }
 }

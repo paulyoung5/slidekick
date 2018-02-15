@@ -57,32 +57,15 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'slide-controls',
-  props: {zoomLevel: Number},
-  data () {
-    return {
-      step: 0.2
-    }
+  computed: {
+    ...mapGetters(['zoomLevel'])
   },
   methods: {
-    zoomIn () {
-      const newValue = this.rounded(this.zoomLevel + this.step)
-
-      if (newValue < 2.5) {
-        this.$emit('update:zoomLevel', newValue)
-      }
-    },
-    zoomOut () {
-      const newValue = this.rounded(this.zoomLevel - this.step)
-
-      if (newValue > 0) {
-        this.$emit('update:zoomLevel', newValue)
-      }
-    },
-    rounded (value) {
-      return Math.round(value * 100) / 100
-    }
+    ...mapActions(['zoomIn', 'zoomOut'])
   },
   mounted () {
     this.canvas = document.querySelector('.current-slide svg')
