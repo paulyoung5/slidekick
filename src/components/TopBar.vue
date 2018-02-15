@@ -3,6 +3,7 @@
   grid-area: top-bar;
   
   background-color: var(--primary-colour);
+  transition: 0.3s all ease-in-out;
   padding: 1em;
   
   display: grid;
@@ -22,18 +23,18 @@
   color: rgba(0, 0, 0, 0.3);
 }
 
-.top-bar .title {
+.top-bar .center {
   display: grid;
   grid-template-columns: 1fr;
 }
 
-.top-bar .title span {
+.top-bar .center span {
   font-size: 0.85em;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.5);
 }
 
-.top-bar .title input {
+.top-bar .center input {
   background: transparent;
   border: 0;
   color: white;
@@ -61,14 +62,19 @@
 
 <template>
     <div class="top-bar">
-        <a href="#" class="brand">
-            <i class="material-icons">slideshow</i>
-        </a>
-        <div class="title">
-            <span>YOU ARE EDITING</span>
-            <input type="text" :value="title">
+        <router-link to="/" class="brand">
+          <i class="material-icons">slideshow</i>
+        </router-link>
+        
+        <div class="center" v-if="title">
+          <span>YOU ARE EDITING</span>
+          <input type="text" :value="title">
         </div>
-        <div class="user">
+        <div class="center" v-else>
+          <span>HOMEPAGE LINKS</span>
+        </div>
+
+        <div class="user" v-if="user">
             <img src="http://i.pravatar.cc/45" width="45" height="45" alt="">
             <span>John Doe</span>
         </div>
@@ -81,7 +87,10 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'top-bar',
   computed: {
-    ...mapGetters(['title'])
+    ...mapGetters(['title']),
+    user () {
+      return false
+    }
   }
 }
 </script>

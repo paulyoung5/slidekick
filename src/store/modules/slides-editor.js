@@ -36,10 +36,10 @@ const getters = {
 }
 
 const actions = {
-  async fetchPresentation ({commit}) {
+  async fetchPresentation ({commit}, presentationId) {
     try {
       // At this point, get the presentation data from mongodb! we can then update the state
-      const {title, slides} = await api.getPresentation(0)
+      const {title, slides} = await api.getPresentation(presentationId)
 
       commit('setTitle', title)
       commit('setSlides', slides)

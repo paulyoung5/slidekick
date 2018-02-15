@@ -1,7 +1,7 @@
 <style>
 .current-slide {
   grid-area: current-slide;
-  grid-row: 2 / -1;
+  grid-row: 1 / -1;
   
   overflow: hidden;
   

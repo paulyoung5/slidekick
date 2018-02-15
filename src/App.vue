@@ -37,14 +37,43 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "top-bar"
+    "router-view"
+  ;
+}
+
+.pagechange-enter-active, .pagechange-leave-active {
+  transition: opacity .3s;
+}
+
+.pagechange-enter, .pagechange-leave-to {
+  opacity: 0;
+}
 </style>
 
 <template>
-  <router-view></router-view>
+  <div class="app">
+    <top-bar></top-bar>
+
+    <transition name="pagechange">
+      <router-view></router-view>
+    </transition>
+  </div>
 </template>
 
 <script>
+import TopBar from '@/components/TopBar.vue'
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    'top-bar': TopBar
+  }
 }
 </script>

@@ -1,13 +1,12 @@
 <style>
-.app {
+.editor {
   display: grid;
   grid-template-areas:
-    "top-bar          top-bar         top-bar"
     "slides-toolbar   toolbox         inspector"
     "slides-toolbar   current-slide   inspector"
     "slides-toolbar   slide-controls  inspector";
   grid-template-columns: 250px minmax(300px, 1fr) 300px;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   overflow: hidden;
 }
 
@@ -37,10 +36,9 @@
 }
 
 @media (max-width: 800px) {
-  .app {
+  .editor {
       grid-template-columns: 1fr;
       grid-template-areas:
-      "top-bar"
       "slide-controls"
       "current-slide"
       ;
@@ -49,14 +47,12 @@
 </style>
 
 <template>
-  <div class="app">
+  <div class="editor">
     <transition name="fade">
       <div class="loading-overlay" v-if="editorLoading">
         Loading presentation..
       </div>
     </transition>
-
-    <top-bar></top-bar>
 
     <slides-toolbar></slides-toolbar>
 
@@ -72,7 +68,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import TopBar from './TopBar.vue'
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
 import Inspector from './Inspector.vue'
@@ -82,7 +77,6 @@ import CurrentSlide from './CurrentSlide.vue'
 export default {
   name: 'slide-editor',
   components: {
-    'top-bar': TopBar,
     'slides-toolbar': SlidesToolbar,
     'toolbox': Toolbox,
     'inspector': Inspector,
@@ -90,7 +84,7 @@ export default {
     'current-slide': CurrentSlide
   },
   created () {
-    this.$store.dispatch('fetchPresentation')
+    this.$store.dispatch('fetchPresentation', this.$route.params.slideId)
   },
   computed: {
     ...mapGetters(['currentSlide', 'selectedElementIndex', 'editorLoading'])
