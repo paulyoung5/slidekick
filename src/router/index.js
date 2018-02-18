@@ -7,11 +7,13 @@ const PageNotFound = () => import('@/components/PageNotFound')
 
 Vue.use(Router)
 
+const showLoading = {showLoading: true}
+
 export default new Router({
   mode: 'history',
   routes: [
-    {name: 'editor', path: '/editor/:presentationId', component: Editor},
-    {name: 'dashboard', path: '/', component: Dashboard},
+    {name: 'editor', path: '/editor/:presentationId', component: Editor, meta: showLoading},
+    {name: 'dashboard', path: '/', component: Dashboard, meta: showLoading},
     {name: 'page-not-found', path: '*', component: PageNotFound}
   ],
   scrollBehavior (to, from, savedPosition) {

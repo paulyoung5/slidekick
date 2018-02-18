@@ -1,4 +1,4 @@
-<style type="text/css">
+<style type="text/css" scoped>
 .loading-overlay {
   background-color: var(--dark-grey);
   color: rgba(0, 0, 0, 0.7);

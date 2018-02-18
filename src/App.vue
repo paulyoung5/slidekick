@@ -67,7 +67,7 @@ a {
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 import TopBar from '@/components/TopBar.vue'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
@@ -79,6 +79,16 @@ export default {
   },
   computed: {
     ...mapGetters(['pageLoading'])
+  },
+  methods: {
+    ...mapActions(['setPageLoading'])
+  },
+  watch: {
+    '$route': function (route) {
+      if (route.meta.showLoading) {
+        this.setPageLoading(true)
+      }
+    }
   }
 }
 </script>
