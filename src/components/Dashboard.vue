@@ -10,11 +10,7 @@
 
   .dashboard-header {
     grid-area: dashboard-header;
-    display: grid;
-    align-items: center;
     padding: 2em;
-    grid-gap: 1em;
-    justify-content: space-between;
     align-self: start;
     height: auto;
   }
@@ -22,6 +18,7 @@
   .my-presentations {
     grid-area: my-presentations;
     padding: 0 2em 2em 2em;
+    overflow: hidden;
 
     display: grid;
     grid-gap: 2em;
@@ -31,7 +28,6 @@
   }
 
   .my-presentations > a {
-    width: 350px;
     border: 3px solid transparent;
     background-color: white;
     color: var(--dark-grey);
@@ -129,7 +125,12 @@
     .my-presentations {
       grid-template-columns: 1fr;
       grid-template-rows: auto;
-      justify-items: stretch;
+      grid-auto-rows: auto;
+      align-content: start;
+    }
+
+     .my-presentations > a .preview {
+      display: none;
     }
   }
 </style>

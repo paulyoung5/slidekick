@@ -36,6 +36,11 @@ body {
   display: grid;
 }
 
+body, .app, .app > * {
+  width: 100vw;
+  overflow: hidden;
+}
+
 a {
   color: inherit;
   text-decoration: none;
