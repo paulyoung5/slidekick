@@ -18,7 +18,6 @@
   .my-presentations {
     grid-area: my-presentations;
     padding: 0 2em 2em 2em;
-    overflow: hidden;
 
     display: grid;
     grid-gap: 2em;
