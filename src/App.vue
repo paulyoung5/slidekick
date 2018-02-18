@@ -57,6 +57,16 @@ a {
     "router-view"
   ;
 }
+
+/* Add extra side padding for iphone X users */
+@media only screen 
+    and (device-width : 375px) 
+    and (device-height : 812px) 
+    and (-webkit-device-pixel-ratio : 3) {
+  .content {
+    padding: 2em;
+  }
+}
 </style>
 
 <template>
@@ -66,7 +76,7 @@ a {
     <top-bar></top-bar>
 
     <transition name="fade">
-      <router-view v-show="!pageLoading"></router-view>
+      <router-view class="content" v-show="!pageLoading"></router-view>
     </transition>
   </div>
 </template>
