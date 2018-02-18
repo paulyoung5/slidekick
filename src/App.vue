@@ -9,6 +9,7 @@
 :root {
   /* Colour Palette */
   --primary-colour: hsl(167, 72%, 40%);
+  --primary-colour-hover: hsl(167, 72%, 35%);
   
   --dark-grey: hsl(0, 0%, 25%);
   --medium-grey: hsl(0, 0%, 40%);
@@ -22,9 +23,11 @@
   --canvas-background-colour: white;
 }
 
-html, body {
-  background-color: var(--dark-grey);
-}
+/* .app.light-theme {
+  --body-text-color: var(--dark-grey);
+  --dark-grey: hsl(0, 0%, 80%);
+  --medium-grey: hsl(0, 0%, 85%);
+} */
 
 body {
   font: 14px var(--system-font);
@@ -39,6 +42,8 @@ a {
 }
 
 .app {
+  background-color: var(--dark-grey);
+
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
@@ -47,33 +52,33 @@ a {
     "router-view"
   ;
 }
-
-.pagechange-enter-active, .pagechange-leave-active {
-  transition: opacity .3s;
-}
-
-.pagechange-enter, .pagechange-leave-to {
-  opacity: 0;
-}
 </style>
 
 <template>
   <div class="app">
+    <loading-overlay :show="pageLoading"></loading-overlay>
+
     <top-bar></top-bar>
 
-    <transition name="pagechange">
-      <router-view></router-view>
+    <transition name="fade">
+      <router-view v-show="!pageLoading"></router-view>
     </transition>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import TopBar from '@/components/TopBar.vue'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
 export default {
   name: 'app',
   components: {
-    'top-bar': TopBar
+    'top-bar': TopBar,
+    'loading-overlay': LoadingOverlay
+  },
+  computed: {
+    ...mapGetters(['pageLoading'])
   }
 }
 </script>
