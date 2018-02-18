@@ -165,18 +165,14 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'dashboard',
   computed: {
     ...mapGetters(['presentations'])
   },
-  methods: {
-    ...mapActions(['setPageLoading'])
-  },
   created () {
-    this.setPageLoading(true)
     const dummyUserId = 0
     this.$store.dispatch('fetchPresentations', dummyUserId)
   }

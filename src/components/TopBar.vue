@@ -138,7 +138,7 @@
 </style>
 
 <template>
-    <div class="top-bar">
+    <div class="top-bar" v-show="!pageLoading">
       <div class="primary-actions">
         <router-link to="/" class="back-button" v-show="displayBack">
         <i class="material-icons">keyboard_arrow_left</i>
@@ -176,7 +176,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'top-bar',
   computed: {
-    ...mapGetters(['title']),
+    ...mapGetters(['title', 'pageLoading']),
     displayBack () {
       return this.$route.name !== 'dashboard'
     },

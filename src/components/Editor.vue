@@ -53,7 +53,6 @@ export default {
     'current-slide': CurrentSlide
   },
   created () {
-    this.setPageLoading(true)
     this.$store.dispatch('fetchPresentation', this.$route.params.presentationId)
   },
   computed: {
