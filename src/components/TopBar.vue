@@ -135,6 +135,13 @@
   background-color: rgba(255, 255, 255, 0.9);
   color: var(--dark-grey);
 }
+
+@media (max-width: 800px) {
+  .presentation-title,
+  .secondary-actions {
+    display: none;
+  }
+}
 </style>
 
 <template>
