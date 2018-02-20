@@ -1,7 +1,8 @@
 const presentations = [
   {
-    id: 0,
-    title: 'test title!',
+    id: 22,
+    userId: 0,
+    title: 'test title! 22',
     slides: [
       {
         backgroundColour: '#FFFFFF',
@@ -24,15 +25,23 @@ const presentations = [
 ]
 
 export default {
-  getPresentation (id) {
+  getPresentation (pId) {
     // Dummy promisified return to simulate fetching from DB
     return new Promise((resolve, reject) => {
-      const result = presentations && presentations[id]
-        ? presentations[id]
-        : null
+      const result = presentations.find(p => p.id === parseInt(pId))
 
       return setTimeout(() => {
-        resolve(result)
+        resolve(result || null)
+      }, 2000)
+    })
+  },
+  getPresentationsForUser (userId) {
+    // Dummy promisified return to simulate fetching from DB
+    return new Promise((resolve, reject) => {
+      const result = presentations.filter(p => p.userId === parseInt(userId))
+
+      return setTimeout(() => {
+        resolve(result || null)
       }, 2000)
     })
   }
