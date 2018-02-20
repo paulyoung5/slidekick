@@ -4,7 +4,6 @@ const state = {
   selectedSlideIndex: 0,
   zoomLevel: 1,
   selectedElementIndex: -1,
-  editorLoading: true,
 
   title: '',
   slides: []
@@ -31,19 +30,18 @@ const getters = {
   },
   title: state => state.title,
   slides: state => state.slides,
-  zoomLevel: state => state.zoomLevel,
-  editorLoading: state => state.editorLoading
+  zoomLevel: state => state.zoomLevel
 }
 
 const actions = {
-  async fetchPresentation ({commit}) {
+  async fetchPresentation ({commit}, presentationId) {
     try {
       // At this point, get the presentation data from mongodb! we can then update the state
-      const {title, slides} = await api.getPresentation(0)
+      const {title, slides} = await api.getPresentation(presentationId)
 
       commit('setTitle', title)
       commit('setSlides', slides)
-      commit('setEditorLoading', false)
+      commit('setPageLoading', false)
     } catch (error) {
       console.error(error)
     }
@@ -81,10 +79,6 @@ const mutations = {
 
   setSelectedSlideIndex (state, selectedIndex) {
     state.selectedSlideIndex = selectedIndex
-  },
-
-  setEditorLoading (state, editorLoading) {
-    state.editorLoading = editorLoading
   },
 
   zoomIn (state) {
