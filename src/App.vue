@@ -23,12 +23,6 @@
   --canvas-background-colour: white;
 }
 
-/* .app.light-theme {
-  --body-text-color: var(--dark-grey);
-  --dark-grey: hsl(0, 0%, 80%);
-  --medium-grey: hsl(0, 0%, 85%);
-} */
-
 body {
   font: 14px var(--system-font);
   color: var(--body-text-colour);
