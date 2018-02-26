@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-Vue.use(Router)
+import VueRouter from 'vue-router'
+
+const AppLanding = () => import('@/components/AppLanding')
 
 // Page modules (loaded only when needed)
 const Dashboard = () => import('@/components/Dashboard')
@@ -11,12 +12,13 @@ const PageNotFound = () => import('@/components/PageNotFound')
 // Meta objects reused across routes
 const showLoading = {showLoading: true}
 
-export default new Router({
+export default new VueRouter({
   mode: 'history',
   routes: [
+    {name: 'landing', path: '/', component: AppLanding},
     {name: 'editor', path: '/editor/:presentationId', component: Editor, meta: showLoading},
     {name: 'presenter', path: '/presenter/:presentationId', component: Presenter, meta: {...showLoading, hideTopBar: true}},
-    {name: 'dashboard', path: '/', component: Dashboard, meta: showLoading},
+    {name: 'dashboard', path: '/dashboard', component: Dashboard, meta: showLoading},
     {name: 'page-not-found', path: '*', component: PageNotFound}
   ],
   scrollBehavior (to, from, savedPosition) {
