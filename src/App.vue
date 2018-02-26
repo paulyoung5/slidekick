@@ -92,6 +92,18 @@ export default {
   methods: {
     ...mapActions(['setPageLoading'])
   },
+  created () {
+    this.$auth.login({
+      rememberMe: false,
+      redirect: null,
+      success () {
+        this.refreshUser().then(() => this.setPageLoading(false))
+      },
+      error () {
+        this.setPageLoading(false)
+      }
+    })
+  },
   watch: {
     '$route': function (route) {
       if (route.meta.showLoading) {
