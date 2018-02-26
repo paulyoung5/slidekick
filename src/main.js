@@ -22,10 +22,13 @@ axiosInstance.interceptors.response.use((request, next) => {
     if (res.status === 401 &&
       ['UnauthorizedAccess', 'InvalidToken'].indexOf(res.data.code) > -1) {
       Vue.auth.logout({
-        redirect: {name: 'auth-login'}
+        redirect: {name: 'landing'}
       })
     } else if (res.status === 500) {
       Vue.router.push({name: 'error-500'})
+    } else if (res.status === 404) {
+      // TODO: add 404 component
+      return Vue.auth.logout()
     }
   })
 })
