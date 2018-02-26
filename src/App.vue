@@ -102,7 +102,7 @@ export default {
       error () {
         this.setPageLoading(false)
       }
-    })
+    }).catch(e => console.log(e))
   },
   watch: {
     '$route': function (route) {
