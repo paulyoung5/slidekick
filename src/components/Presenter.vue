@@ -192,6 +192,7 @@ export default {
       this.fullscreen = document.fullscreen || document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
     },
     onKeyup (e) {
+      e.preventDefault()
       switch (e.keyCode) {
         case 37:
           this.previous()
