@@ -62,10 +62,10 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'slide-controls',
   computed: {
-    ...mapGetters(['zoomLevel'])
+    ...mapGetters('editor', ['zoomLevel'])
   },
   methods: {
-    ...mapActions(['zoomIn', 'zoomOut'])
+    ...mapActions('editor', ['zoomIn', 'zoomOut'])
   },
   mounted () {
     this.canvas = document.querySelector('.current-slide svg')

@@ -4,17 +4,25 @@
   grid-row: 1 / -1;
   
   overflow: hidden;
-  
   display: grid;
   align-items: center;
   justify-items: center;
+}
+
+.editor .current-slide {
   padding: 3em;
 }
 
-.current-slide svg {
+.presenter .current-slide svg {
+  /* Styles to preserve 5:3 aspect ratio */
+
+  width: 100vw;
+  height: 60vw; /* 3/5 = 0.6 */
   max-height: 100vh;
-  max-width: 100vh;
-  
+  max-width: 166.66vh; /* 5/3 = 1.6666 */
+}
+
+.current-slide svg {
   background-color: var(--canvas-background-colour);
   outline: 3px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
@@ -39,11 +47,20 @@
   cursor: move;
 }
 
-@media (max-width: 800px) {
-  .current-slide svg {
-    max-width: 100%;
-    max-height: 100%;
-  }
+.presenter .current-slide {
+  background-color: black;
+  padding: 0;
+}
+
+.presenter .current-slide svg {
+  background-color: var(--canvas-background-colour);
+  outline: none;
+  box-shadow: none;
+}
+
+.presenter .current-slide,
+.presenter .current-slide > * {
+  cursor: default;
 }
 </style>
 
@@ -60,16 +77,22 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
 import TextElement from './slide-elements/TextElement'
 
 export default {
   name: 'current-slide',
+  props: {
+    slides: {type: Array, default: []},
+    selectedSlideIndex: {type: Number, default: 0},
+    zoomLevel: {type: Number, default: 1}
+  },
   components: {
     'text-element': TextElement
   },
   computed: {
-    ...mapGetters(['currentSlide', 'currentElement', 'zoomLevel']),
+    currentSlide () {
+      return this.slides.length && this.slides[this.selectedSlideIndex] ? this.slides[this.selectedSlideIndex] : null
+    },
     textElements () {
       return this.currentSlide ? this.currentSlide.elements.filter(el => el.type === 'TEXT') : []
     },
@@ -81,6 +104,9 @@ export default {
         '--canvas-zoom-level': this.zoomLevel,
         '--canvas-background-colour': this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
       }
+    },
+    presenterMode () {
+      return this.$route.name === 'presenter'
     }
   }
 }
