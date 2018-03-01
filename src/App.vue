@@ -23,10 +23,13 @@
   --canvas-background-colour: white;
 }
 
+html, body {
+  height: 100vh;
+}
+
 body {
   font: 14px var(--system-font);
   color: var(--body-text-colour);
-  height: 100vh;
   display: grid;
 }
 
