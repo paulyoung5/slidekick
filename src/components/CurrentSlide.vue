@@ -9,15 +9,20 @@
   justify-content: center;
 }
 
-.current-slide svg {
-  overflow: hidden;
+.editor .current-slide {
+  padding: 3em;
+}
 
+.presenter .current-slide svg {
   /* Styles to preserve 5:3 aspect ratio */
+
   width: 100vw;
   height: 60vw; /* 3/5 = 0.6 */
   max-height: 100vh;
   max-width: 166.66vh; /* 5/3 = 1.6666 */
-  
+}
+
+.current-slide svg {
   background-color: var(--canvas-background-colour);
   outline: 3px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
