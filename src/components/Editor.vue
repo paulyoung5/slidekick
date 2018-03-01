@@ -53,14 +53,14 @@ export default {
     'current-slide': CurrentSlide
   },
   created () {
-    this.$store.dispatch('fetchPresentation', this.$route.params.presentationId)
+    this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
   },
   computed: {
-    ...mapGetters(['currentSlide', 'selectedElementIndex'])
+    ...mapGetters('editor', ['currentSlide', 'selectedElementIndex'])
   },
   methods: {
     inspectElement (index) {
-      this.$store.commit('setSelectedElementIndex', index)
+      this.$store.commit('editor/setSelectedElementIndex', index)
     }
   }
 }

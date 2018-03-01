@@ -105,7 +105,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'inspector',
   computed: {
-    ...mapGetters(['currentSlide', 'currentElement']),
+    ...mapGetters('editor', ['currentSlide', 'currentElement']),
     backgroundColour () {
       return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
     },
@@ -114,7 +114,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateBackgroundColour'])
+    ...mapActions('editor', ['updateBackgroundColour'])
   }
 }
 </script>

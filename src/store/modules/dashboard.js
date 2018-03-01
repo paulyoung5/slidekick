@@ -15,7 +15,7 @@ const actions = {
       const presentations = await api.getPresentationsForUser(userId)
 
       commit('setPresentations', presentations)
-      commit('setPageLoading', false)
+      commit('setPageLoading', false, { root: true })
     } catch (error) {
       console.error(error)
     }
@@ -29,6 +29,7 @@ const mutations = {
 }
 
 export default {
+  namespaced: true,
   state,
   getters,
   actions,

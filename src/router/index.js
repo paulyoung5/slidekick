@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+Vue.use(Router)
 
+// Page modules (loaded only when needed)
 const Dashboard = () => import('@/components/Dashboard')
 const Editor = () => import('@/components/Editor')
 const Presenter = () => import('@/components/Presenter')
 const PageNotFound = () => import('@/components/PageNotFound')
 
-Vue.use(Router)
-
+// Meta objects reused across routes
 const showLoading = {showLoading: true}
 
 export default new Router({

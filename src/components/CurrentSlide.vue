@@ -82,7 +82,7 @@ export default {
     'text-element': TextElement
   },
   computed: {
-    ...mapGetters(['currentSlide', 'currentElement', 'zoomLevel']),
+    ...mapGetters('editor', ['currentSlide', 'zoomLevel']),
     textElements () {
       return this.currentSlide ? this.currentSlide.elements.filter(el => el.type === 'TEXT') : []
     },
@@ -94,6 +94,9 @@ export default {
         '--canvas-zoom-level': this.zoomLevel,
         '--canvas-background-colour': this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
       }
+    },
+    presenterMode () {
+      return this.$route.name === 'presenter'
     }
   }
 }

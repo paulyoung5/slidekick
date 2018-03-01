@@ -92,10 +92,10 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'slides-toolbar',
   computed: {
-    ...mapGetters(['slides', 'selectedSlideIndex'])
+    ...mapGetters('editor', ['slides', 'selectedSlideIndex'])
   },
   methods: {
-    ...mapActions(['selectSlideFromList'])
+    ...mapActions('editor', ['selectSlideFromList'])
   }
 }
 </script>

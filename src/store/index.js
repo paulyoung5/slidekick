@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import dashboard from './modules/dashboard'
-import slidesEditor from './modules/slides-editor'
+import editor from './modules/slides-editor'
+import presenter from './modules/presenter'
 
 Vue.use(Vuex)
 
@@ -24,5 +25,9 @@ export default new Vuex.Store({
       state.pageLoading = pageLoading
     }
   },
-  modules: {dashboard, slidesEditor}
+  modules: {
+    dashboard: dashboard,
+    editor: editor,
+    presenter: presenter
+  }
 })
