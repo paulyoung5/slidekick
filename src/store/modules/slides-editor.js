@@ -41,11 +41,10 @@ const getters = {
 const actions = {
   async fetchPresentation ({commit}, presentationId) {
     try {
-      // At this point, get the presentation data from mongodb! we can then update the state
       const presentation = await api.getPresentation(presentationId)
 
       commit('setPresentation', presentation)
-      commit('setPageLoading', false)
+      commit('setPageLoading', false, { root: true })
     } catch (error) {
       console.error(error)
     }
@@ -119,6 +118,7 @@ const mutations = {
 }
 
 export default {
+  namespaced: true,
   state,
   getters,
   actions,

@@ -148,10 +148,10 @@
     <div class="top-bar" v-show="!pageLoading && !hideTopBar">
       <div class="primary-actions">
         <router-link to="/" class="back-button" v-show="displayBack">
-        <i class="material-icons">keyboard_arrow_left</i>
+          <i class="material-icons">keyboard_arrow_left</i>
         </router-link>
 
-        <div class="presentation-title" v-show="editorMode">
+        <div class="presentation-title" v-if="editorMode">
           <input type="text" :value="title">
           <i class="material-icons">edit</i>
         </div>
@@ -170,7 +170,7 @@
       </div>
 
       <div class="secondary-actions">
-        <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-show="editorMode">
+        <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode">
           <i class="material-icons">play_circle_outline</i> Present
         </router-link>
       </div>
@@ -183,7 +183,9 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'top-bar',
   computed: {
-    ...mapGetters(['title', 'pageLoading', 'presentationId']),
+    ...mapGetters(['pageLoading']),
+    ...mapGetters('editor', ['title', 'presentationId']),
+
     hideTopBar () {
       return this.$route.meta.hideTopBar
     },

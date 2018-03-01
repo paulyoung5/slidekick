@@ -170,11 +170,11 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'dashboard',
   computed: {
-    ...mapGetters(['presentations'])
+    ...mapGetters('dashboard', ['presentations'])
   },
   created () {
     const dummyUserId = 0
-    this.$store.dispatch('fetchPresentations', dummyUserId)
+    this.$store.dispatch('dashboard/fetchPresentations', dummyUserId)
   }
 }
 </script>

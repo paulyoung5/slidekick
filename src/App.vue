@@ -52,6 +52,13 @@ a {
   ;
 }
 
+.app.top-bar-hidden {
+  grid-template-rows: 1fr;
+  grid-template-areas:
+    "router-view"
+  ;
+}
+
 /* Add extra side padding for iphone X users */
 @media only screen 
     and (device-width : 375px) 
@@ -64,7 +71,7 @@ a {
 </style>
 
 <template>
-  <div class="app">
+  <div class="app" :class="appConditionalStyles">
     <loading-overlay :show="pageLoading"></loading-overlay>
 
     <top-bar></top-bar>
@@ -87,7 +94,15 @@ export default {
     'loading-overlay': LoadingOverlay
   },
   computed: {
-    ...mapGetters(['pageLoading'])
+    ...mapGetters(['pageLoading']),
+    hideTopBar () {
+      return this.$route.meta.hideTopBar
+    },
+    appConditionalStyles () {
+      return {
+        'top-bar-hidden': this.hideTopBar
+      }
+    }
   },
   methods: {
     ...mapActions(['setPageLoading'])
