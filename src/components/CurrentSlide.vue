@@ -4,16 +4,19 @@
   grid-row: 1 / -1;
   
   overflow: hidden;
-  
-  display: grid;
+  display: flex;
   align-items: center;
-  justify-items: center;
-  padding: 3em;
+  justify-content: center;
 }
 
 .current-slide svg {
+  overflow: hidden;
+
+  /* Styles to preserve 5:3 aspect ratio */
+  width: 100vw;
+  height: 60vw; /* 3/5 = 0.6 */
   max-height: 100vh;
-  max-width: 100vh;
+  max-width: 166.66vh; /* 5/3 = 1.6666 */
   
   background-color: var(--canvas-background-colour);
   outline: 3px solid rgba(0, 0, 0, 0.2);
@@ -48,20 +51,11 @@
   background-color: var(--canvas-background-colour);
   outline: none;
   box-shadow: none;
-  max-width: 100%;
-  max-height: 100%;
 }
 
 .presenter .current-slide,
 .presenter .current-slide > * {
   cursor: default;
-}
-
-@media (max-width: 800px) {
-  .current-slide svg {
-    max-width: 100%;
-    max-height: 100%;
-  }
 }
 </style>
 

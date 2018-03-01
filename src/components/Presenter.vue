@@ -12,13 +12,22 @@
     ;
   }
 
+  .presenter.ui-hidden,
+  .presenter.ui-hidden * {
+    cursor: none !important;
+  }
+
+  .presenter .presenter-toolbar,
+  .presenter.ui-hidden:hover .presenter-toolbar {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
   .presenter-toolbar {
     grid-area: presenter-toolbar;
     background-color: black;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
     z-index: 2;
-    opacity: 0;
-    transform: translateY(-100%);
 
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -90,7 +99,7 @@
 </style>
 
 <template>
-  <div class="presenter">
+  <div class="presenter" :class="computedStyles">
     <div class="presenter-toolbar">
       <div class="left">
         <router-link to="/" class="brand">
@@ -120,8 +129,11 @@
       </div>
 
       <div class="right">
-        <a href="#">
+        <a href="#" @click="enterFullscreen" v-if="!fullscreen">
           <i class="material-icons">fullscreen</i> Fullscreen
+        </a>
+        <a href="#" @click="exitFullscreen" v-else>
+          <i class="material-icons">fullscreen_exit</i> Exit Fullscreen
         </a>
       </div>
     </div>
@@ -138,14 +150,88 @@ export default {
   components: {
     'current-slide': CurrentSlide
   },
+  data () {
+    return {
+      fullscreen: false,
+      showUI: false,
+      movemoveTimerActive: false
+    }
+  },
   computed: {
-    ...mapGetters('presenter', ['presentation', 'selectedSlideIndex', 'slides'])
+    ...mapGetters('presenter', ['presentation', 'selectedSlideIndex', 'slides']),
+    computedStyles () {
+      return {
+        'ui-hidden': !this.showUI
+      }
+    }
   },
   methods: {
-    ...mapActions('presenter', ['next', 'previous'])
+    ...mapActions('presenter', ['next', 'previous']),
+    enterFullscreen () {
+      const element = document.querySelector('.presenter')
+      if (element.requestFullscreen) {
+        element.requestFullscreen()
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen()
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen()
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen()
+      }
+    },
+    exitFullscreen () {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen()
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen()
+      }
+    },
+    onFullscreenChange (e) {
+      this.fullscreen = document.fullscreen || document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
+    },
+    onKeyup (e) {
+      switch (e.keyCode) {
+        case 37:
+          this.previous()
+          break
+        case 39:
+          this.next()
+          break
+      }
+    },
+    onMousemove () {
+      if (this.movemoveTimerActive) {
+        return
+      }
+
+      this.showUI = true
+      this.movemoveTimerActive = true
+
+      setTimeout(() => {
+        this.showUI = false
+        this.movemoveTimerActive = false
+      }, 5000)
+    }
   },
   created () {
     this.$store.dispatch('presenter/fetchPresentation', this.$route.params.presentationId)
+  },
+  mounted () {
+    document.onkeydown = this.onKeyup
+    document.addEventListener('mousemove', this.onMousemove)
+    document.addEventListener('webkitfullscreenchange', this.onFullscreenChange)
+    document.addEventListener('mozfullscreenchange', this.onFullscreenChange)
+    document.addEventListener('msfullscreenchange', this.onFullscreenChange)
+    document.addEventListener('fullscreenchange', this.onFullscreenChange)
+  },
+  beforeDestroy () {
+    /* Make sure we get rid of the event listeners */
+    window.removeEventListener('webkitfullscreenchange', this.onFullscreenChange)
+    window.removeEventListener('mozfullscreenchange', this.onFullscreenChange)
+    window.removeEventListener('msfullscreenchange', this.onFullscreenChange)
+    window.removeEventListener('fullscreenchange', this.onFullscreenChange)
   }
 }
 </script>
