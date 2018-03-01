@@ -2,6 +2,7 @@
 .top-bar {
   grid-area: top-bar;
   
+  border-bottom: 4px solid var(--primary-colour);
   transition: 0.3s all ease-in-out;
   
   display: grid;
@@ -145,13 +146,13 @@
 </style>
 
 <template>
-    <div class="top-bar" v-show="!pageLoading">
+    <div class="top-bar" v-show="!pageLoading && !hideTopBar">
       <div class="primary-actions">
         <router-link to="/" class="back-button" v-show="displayBack">
-        <i class="material-icons">keyboard_arrow_left</i>
+          <i class="material-icons">keyboard_arrow_left</i>
         </router-link>
 
-        <div class="presentation-title" v-show="editorMode">
+        <div class="presentation-title" v-if="editorMode">
           <input type="text" :value="title">
           <i class="material-icons">edit</i>
         </div>
@@ -170,9 +171,9 @@
       </div>
 
       <div class="secondary-actions">
-        <a href="#" v-show="editorMode">
+        <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode">
           <i class="material-icons">play_circle_outline</i> Present
-        </a>
+        </router-link>
       </div>
     </div>
 </template>
@@ -183,7 +184,12 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'top-bar',
   computed: {
-    ...mapGetters(['title', 'pageLoading']),
+    ...mapGetters(['pageLoading']),
+    ...mapGetters('editor', ['title', 'presentationId']),
+
+    hideTopBar () {
+      return this.$route.meta.hideTopBar
+    },
     displayBack () {
       return this.$route.name !== 'dashboard'
     },

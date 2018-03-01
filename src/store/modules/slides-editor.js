@@ -5,43 +5,46 @@ const state = {
   zoomLevel: 1,
   selectedElementIndex: -1,
 
-  title: '',
-  slides: []
+  presentation: {
+    id: -1,
+    title: '',
+    slides: []
+  }
 }
 
 const ZOOM_STEP_LEVEL = 0.2
 
 const getters = {
+  presentation: state => state.presentation,
+  presentationId: state => state.presentation ? state.presentation.id : -1,
+  title: state => state.presentation.title,
   currentSlide: state => {
-    if (!state.slides.length || !state.slides[state.selectedSlideIndex]) {
+    if (!state.presentation.slides.length || !state.presentation.slides[state.selectedSlideIndex]) {
       return null
     }
 
-    return state.slides[state.selectedSlideIndex]
+    return state.presentation.slides[state.selectedSlideIndex]
   },
   selectedSlideIndex: state => state.selectedSlideIndex,
   selectedElementIndex: state => state.selectedElementIndex,
   currentElement: state => {
-    if (!state.slides.length || state.selectedSlideIndex < 0 || state.selectedElementIndex < 0) {
+    if (!state.presentation.slides.length || state.selectedSlideIndex < 0 || state.selectedElementIndex < 0) {
       return null
     }
 
-    return state.slides[state.selectedSlideIndex].elements.find(el => el.id === state.selectedElementIndex)
+    return state.presentation.slides[state.selectedSlideIndex].elements.find(el => el.id === state.selectedElementIndex)
   },
-  title: state => state.title,
-  slides: state => state.slides,
+  slides: state => state.presentation.slides,
   zoomLevel: state => state.zoomLevel
 }
 
 const actions = {
   async fetchPresentation ({commit}, presentationId) {
     try {
-      // At this point, get the presentation data from mongodb! we can then update the state
-      const {title, slides} = await api.getPresentation(presentationId)
+      const presentation = await api.getPresentation(presentationId)
 
-      commit('setTitle', title)
-      commit('setSlides', slides)
-      commit('setPageLoading', false)
+      commit('setPresentation', presentation)
+      commit('setPageLoading', false, { root: true })
     } catch (error) {
       console.error(error)
     }
@@ -69,12 +72,16 @@ const actions = {
 }
 
 const mutations = {
+  setPresentation (state, presentation) {
+    state.presentation = presentation
+  },
+
   setTitle (state, title) {
-    state.title = title
+    state.presentation.title = title
   },
 
   setSlides (state, slides) {
-    state.slides = slides
+    state.presentation.slides = slides
   },
 
   setSelectedSlideIndex (state, selectedIndex) {
@@ -102,15 +109,16 @@ const mutations = {
   },
 
   setBackgroundColour (state, newBackgroundColour) {
-    if (!state.slides.length || !state.slides[state.selectedSlideIndex]) {
+    if (!state.presentation.slides.length || !state.presentation.slides[state.selectedSlideIndex]) {
       return null
     }
 
-    state.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
+    state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
   }
 }
 
 export default {
+  namespaced: true,
   state,
   getters,
   actions,

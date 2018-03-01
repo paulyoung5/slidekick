@@ -31,12 +31,12 @@
 
     <slide-controls></slide-controls>
 
-    <current-slide></current-slide>
+    <current-slide :selected-slide-index="selectedSlideIndex" :slides="slides" :zoom-level="zoomLevel"></current-slide>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
 import Inspector from './Inspector.vue'
@@ -53,15 +53,14 @@ export default {
     'current-slide': CurrentSlide
   },
   created () {
-    this.$store.dispatch('fetchPresentation', this.$route.params.presentationId)
+    this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
   },
   computed: {
-    ...mapGetters(['currentSlide', 'selectedElementIndex'])
+    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel'])
   },
   methods: {
-    ...mapActions(['setPageLoading']),
     inspectElement (index) {
-      this.$store.commit('setSelectedElementIndex', index)
+      this.$store.commit('editor/setSelectedElementIndex', index)
     }
   }
 }
