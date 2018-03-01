@@ -15,6 +15,7 @@
   .presenter-toolbar {
     grid-area: presenter-toolbar;
     background-color: black;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
     z-index: 2;
     opacity: 0;
     transform: translateY(-100%);
@@ -105,7 +106,7 @@
       </div>
 
       <div class="controls">
-        <a href="#">
+        <a href="#" @click="previous">
           <i class="material-icons">chevron_left</i>
         </a>
 
@@ -113,7 +114,7 @@
           {{ selectedSlideIndex + 1 }} / {{ presentation.slides.length }}
         </span>
 
-        <a href="#">
+        <a href="#" @click="next">
           <i class="material-icons">chevron_right</i>
         </a>
       </div>
@@ -124,12 +125,12 @@
         </a>
       </div>
     </div>
-    <current-slide></current-slide>
+    <current-slide :slides="slides" :selected-slide-index="selectedSlideIndex"></current-slide>
   </div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 import CurrentSlide from './CurrentSlide.vue'
 
 export default {
@@ -138,7 +139,10 @@ export default {
     'current-slide': CurrentSlide
   },
   computed: {
-    ...mapGetters('presenter', ['presentation', 'selectedSlideIndex'])
+    ...mapGetters('presenter', ['presentation', 'selectedSlideIndex', 'slides'])
+  },
+  methods: {
+    ...mapActions('presenter', ['next', 'previous'])
   },
   created () {
     this.$store.dispatch('presenter/fetchPresentation', this.$route.params.presentationId)

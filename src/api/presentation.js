@@ -19,6 +19,22 @@ const presentations = [
             }
           }
         ]
+      },
+      {
+        backgroundColour: '#FF0000',
+        elements: [
+          {
+            id: 0,
+            type: 'TEXT',
+            properties: {
+              x: '100px',
+              y: '200px',
+              fontFamily: 'Trebuchet MS',
+              fontSize: 30,
+              content: 'Slide 2'
+            }
+          }
+        ]
       }
     ]
   }
