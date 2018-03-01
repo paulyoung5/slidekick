@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 const Dashboard = () => import('@/components/Dashboard')
 const Editor = () => import('@/components/Editor')
+const Presenter = () => import('@/components/Presenter')
 const PageNotFound = () => import('@/components/PageNotFound')
 
 Vue.use(Router)
@@ -13,6 +14,7 @@ export default new Router({
   mode: 'history',
   routes: [
     {name: 'editor', path: '/editor/:presentationId', component: Editor, meta: showLoading},
+    {name: 'presenter', path: '/presenter/:presentationId', component: Presenter, meta: {...showLoading, hideTopBar: true}},
     {name: 'dashboard', path: '/', component: Dashboard, meta: showLoading},
     {name: 'page-not-found', path: '*', component: PageNotFound}
   ],

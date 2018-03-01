@@ -39,6 +39,19 @@
   cursor: move;
 }
 
+.presenter .current-slide {
+  background-color: black;
+  padding: 0;
+}
+
+.presenter .current-slide svg {
+  background-color: var(--canvas-background-colour);
+  outline: none;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+}
+
 @media (max-width: 800px) {
   .current-slide svg {
     max-width: 100%;
