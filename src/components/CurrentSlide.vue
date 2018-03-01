@@ -52,6 +52,11 @@
   max-height: 100%;
 }
 
+.presenter .current-slide,
+.presenter .current-slide > * {
+  cursor: default;
+}
+
 @media (max-width: 800px) {
   .current-slide svg {
     max-width: 100%;
@@ -73,16 +78,22 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
 import TextElement from './slide-elements/TextElement'
 
 export default {
   name: 'current-slide',
+  props: {
+    slides: {type: Array, default: []},
+    selectedSlideIndex: {type: Number, default: 0},
+    zoomLevel: {type: Number, default: 1}
+  },
   components: {
     'text-element': TextElement
   },
   computed: {
-    ...mapGetters('editor', ['currentSlide', 'zoomLevel']),
+    currentSlide () {
+      return this.slides.length && this.slides[this.selectedSlideIndex] ? this.slides[this.selectedSlideIndex] : null
+    },
     textElements () {
       return this.currentSlide ? this.currentSlide.elements.filter(el => el.type === 'TEXT') : []
     },

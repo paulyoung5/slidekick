@@ -64,11 +64,19 @@ const mutations = {
   },
 
   nextSlide (state) {
-    state.selectedSlideIndex += 1
+    const newIndex = state.selectedSlideIndex + 1
+
+    if (state.presentation.slides.length && state.presentation.slides[newIndex]) {
+      state.selectedSlideIndex = newIndex
+    }
   },
 
   previousSlide (state) {
-    state.selectedSlideIndex -= 1
+    const newIndex = state.selectedSlideIndex - 1
+
+    if (state.presentation.slides.length && state.presentation.slides[newIndex]) {
+      state.selectedSlideIndex = newIndex
+    }
   }
 }
 
