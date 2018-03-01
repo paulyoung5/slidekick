@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
 import Inspector from './Inspector.vue'
@@ -59,7 +59,6 @@ export default {
     ...mapGetters(['currentSlide', 'selectedElementIndex'])
   },
   methods: {
-    ...mapActions(['setPageLoading']),
     inspectElement (index) {
       this.$store.commit('setSelectedElementIndex', index)
     }

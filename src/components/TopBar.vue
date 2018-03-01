@@ -145,7 +145,7 @@
 </style>
 
 <template>
-    <div class="top-bar" v-show="!pageLoading">
+    <div class="top-bar" v-show="!pageLoading && !hideTopBar">
       <div class="primary-actions">
         <router-link to="/" class="back-button" v-show="displayBack">
         <i class="material-icons">keyboard_arrow_left</i>
@@ -170,9 +170,9 @@
       </div>
 
       <div class="secondary-actions">
-        <a href="#" v-show="editorMode">
+        <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-show="editorMode">
           <i class="material-icons">play_circle_outline</i> Present
-        </a>
+        </router-link>
       </div>
     </div>
 </template>
@@ -183,7 +183,10 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'top-bar',
   computed: {
-    ...mapGetters(['title', 'pageLoading']),
+    ...mapGetters(['title', 'pageLoading', 'presentationId']),
+    hideTopBar () {
+      return this.$route.meta.hideTopBar
+    },
     displayBack () {
       return this.$route.name !== 'dashboard'
     },
