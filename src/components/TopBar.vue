@@ -2,6 +2,7 @@
 .top-bar {
   grid-area: top-bar;
   
+  border-bottom: 4px solid var(--primary-colour);
   transition: 0.3s all ease-in-out;
   
   display: grid;
