@@ -31,7 +31,7 @@
 
     <slide-controls></slide-controls>
 
-    <current-slide :selected-slide-index="selectedSlideIndex" :slides="slides"></current-slide>
+    <current-slide :selected-slide-index="selectedSlideIndex" :slides="slides" :zoom-level="zoomLevel"></current-slide>
   </div>
 </template>
 
@@ -56,7 +56,7 @@ export default {
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
   },
   computed: {
-    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex'])
+    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel'])
   },
   methods: {
     inspectElement (index) {

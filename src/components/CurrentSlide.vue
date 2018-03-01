@@ -4,9 +4,9 @@
   grid-row: 1 / -1;
   
   overflow: hidden;
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
 }
 
 .editor .current-slide {
