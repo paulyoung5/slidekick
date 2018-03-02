@@ -84,6 +84,10 @@ const actions = {
 
   updateFontSize ({commit}, {element, value}) {
     commit('setElementFontSize', {element, value})
+  },
+
+  updateFill ({commit}, {element, value}) {
+    commit('setElementFill', {element, value})
   }
 }
 
@@ -162,6 +166,14 @@ const mutations = {
       return null
     }
     element.properties.fontSize = value
+  },
+
+  setElementFill (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the fill for an element (element was null)')
+      return null
+    }
+    element.properties.fill = value
   }
 }
 
