@@ -103,6 +103,23 @@
 
     <div class="section" v-if="currentElement">
       <div class="header">
+        <span>APPEARANCE</span>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
+      </div>
+
+      <div class="options">
+        <label>Fill</label>
+        <input type="color" v-model="fill">
+
+        <label>Value</label>
+        <input type="text" v-model="content">
+      </div>
+    </div>
+
+    <div class="section" v-if="currentElement">
+      <div class="header">
         <span>POSITION</span>
         <a href="#" @click.prevent="toggleSection">
           <i class="material-icons">arrow_drop_down</i>
@@ -131,23 +148,6 @@
 
         <label>Size</label>
         <input type="number" step="5" min="10" v-model="fontSize">
-      </div>
-    </div>
-
-    <div class="section" v-if="currentElement">
-      <div class="header">
-        <span>APPEARANCE</span>
-        <a href="#" @click.prevent="toggleSection">
-          <i class="material-icons">arrow_drop_down</i>
-        </a>
-      </div>
-
-      <div class="options">
-        <label>Fill</label>
-        <input type="color" v-model="fill">
-
-        <label>Value</label>
-        <input type="text" v-model="content">
       </div>
     </div>
   </div>
