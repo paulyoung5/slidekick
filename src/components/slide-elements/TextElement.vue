@@ -12,7 +12,8 @@
     :y="textY"
     :font-family="fontFamily"
     :font-size="fontSize"
-    @click="inspectElement(element.id)"
+    :fill="fill"
+    @click.stop="inspectElement(element.id)"
   >
     {{ content }}
   </text>
@@ -74,6 +75,9 @@ export default {
     },
     content () {
       return this.element.properties.content
+    },
+    fill () {
+      return this.element.properties.fill
     }
   },
   methods: {

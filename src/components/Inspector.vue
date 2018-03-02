@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    <div class="section" v-if="currentElement">
+    <div class="section" v-if="currentElement && currentElement.type === 'TEXT'">
       <div class="header">
         <span>FONT</span>
         <a href="#" @click.prevent="toggleSection">
@@ -128,6 +128,23 @@
         <select v-model="fontFamily">
           <option v-for="font in fonts" :value="font.name">{{ font.name }}</option>
         </select>
+
+        <label>Size</label>
+        <input type="number" step="5" min="10" v-model="fontSize">
+      </div>
+    </div>
+
+    <div class="section" v-if="currentElement">
+      <div class="header">
+        <span>APPEARANCE</span>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
+      </div>
+
+      <div class="options">
+        <label>Fill</label>
+        <input type="color" v-model="fill">
 
         <label>Size</label>
         <input type="number" step="5" min="10" v-model="fontSize">
@@ -182,6 +199,14 @@ export default {
         this.updateY({element: this.currentElement, value: `${value}px`})
       }
     },
+    fill: {
+      get () {
+        return this.currentElement && this.currentElement.properties.fill ? this.currentElement.properties.fill : '#000000'
+      },
+      set (value) {
+        this.updateFill({element: this.currentElement, value})
+      }
+    },
     fontFamily: {
       get () {
         return this.currentElement.properties.fontFamily
@@ -200,7 +225,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize']),
+    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize', 'updateFill']),
     toggleSection (e) {
       let sectionEl = e.currentTarget.parentElement.parentElement
       sectionEl.classList.toggle('hidden')

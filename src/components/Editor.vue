@@ -22,7 +22,7 @@
 </style>
 
 <template>
-  <div class="editor">
+  <div class="editor" @click="clearInspector">
     <slides-toolbar></slides-toolbar>
 
     <toolbox></toolbox>
@@ -62,6 +62,9 @@ export default {
   methods: {
     inspectElement (index) {
       this.$store.commit('editor/setSelectedElementIndex', index)
+    },
+    clearInspector (e) {
+      this.$store.commit('editor/setSelectedElementIndex', null)
     }
   }
 }
