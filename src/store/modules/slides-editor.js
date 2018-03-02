@@ -88,6 +88,10 @@ const actions = {
 
   updateFill ({commit}, {element, value}) {
     commit('setElementFill', {element, value})
+  },
+
+  updateContent ({commit}, {element, value}) {
+    commit('setElementContent', {element, value})
   }
 }
 
@@ -174,6 +178,14 @@ const mutations = {
       return null
     }
     element.properties.fill = value
+  },
+
+  setElementContent (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the content for an element (element was null)')
+      return null
+    }
+    element.properties.content = value
   }
 }
 

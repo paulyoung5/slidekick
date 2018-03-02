@@ -11,23 +11,23 @@ const presentations = [
             id: 0,
             type: 'TEXT',
             properties: {
-              x: '100px',
-              y: '100px',
+              x: '30px',
+              y: '30px',
               fill: '#000000',
               fontFamily: 'Verdana',
-              fontSize: '30px',
-              content: 'Slide 1 text'
+              fontSize: '20px',
+              content: 'Title goes here'
             }
           },
           {
             id: 1,
             type: 'TEXT',
             properties: {
-              x: '0px',
-              y: '200px',
+              x: '30px',
+              y: '80px',
               fill: '#000000',
-              fontFamily: 'Trebuchet MS',
-              fontSize: '50px',
+              fontFamily: 'Comic Sans MS',
+              fontSize: '15px',
               content: 'Some other text'
             }
           }

@@ -7,7 +7,7 @@
 <template>
   <text
     ref="textEl"
-    dominant-baseline="text-before-edge"
+    dominant-baseline="hanging"
     :x="textX"
     :y="textY"
     :font-family="fontFamily"
