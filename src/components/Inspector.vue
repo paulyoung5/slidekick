@@ -20,6 +20,20 @@
   grid-template-rows: auto;
 }
 
+.inspector .section.hidden .options {
+  height: 0;
+  opacity: 0;
+  padding: 0;
+  transform: translateY(-100%);
+  visibility: hidden;
+  transition: 0.4s opacity transform;
+}
+
+.inspector .section.hidden .header a i {
+  transform: rotate(180deg);
+  transition: 0.4s all;
+}
+
 .inspector .section .header {
   background-color: rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.9);
@@ -77,23 +91,46 @@
     <div class="section" v-if="!currentElement">
       <div class="header">
         <span>PROPERTIES</span>
-        <a href="#"><i class="material-icons">arrow_drop_down</i></a>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
       </div>
 
       <div class="options">
-      <label>Background</label> <input type="color" :value="backgroundColour" @input="updateBackgroundColour">
+      <label>Background</label> <input type="color" v-model="backgroundColour">
       </div>
     </div>
 
-    <div class="section" v-else>
+    <div class="section" v-if="currentElement">
       <div class="header">
         <span>POSITION</span>
-        <a href="#"><i class="material-icons">arrow_drop_down</i></a>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
       </div>
 
       <div class="options">
-        <label>X</label> <input type="text" v-model="coordinates.x">
-        <label>Y</label> <input type="text" v-model="coordinates.y">
+        <label>X</label> <input type="number" min="0" step="1" v-model="xPosition">
+        <label>Y</label> <input type="number" min="0" step="1" v-model="yPosition">
+      </div>
+    </div>
+
+    <div class="section" v-if="currentElement">
+      <div class="header">
+        <span>FONT</span>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
+      </div>
+
+      <div class="options">
+        <label>Family</label>
+        <select v-model="fontFamily">
+          <option v-for="font in fonts" :value="font.name">{{ font.name }}</option>
+        </select>
+
+        <label>Size</label>
+        <input type="number" step="5" min="10" v-model="fontSize">
       </div>
     </div>
   </div>
@@ -104,17 +141,70 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'inspector',
+  data () {
+    return {
+      fonts: [
+        {name: 'Arial'},
+        {name: 'Verdana'},
+        {name: 'Helvetica'},
+        {name: 'Comic Sans MS'},
+        {name: 'Impact'},
+        {name: 'Times New Roman'},
+        {name: 'Georgia'},
+        {name: 'Courier'},
+        {name: 'Courier New'}
+      ]
+    }
+  },
   computed: {
     ...mapGetters('editor', ['currentSlide', 'currentElement']),
-    backgroundColour () {
-      return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
+    backgroundColour: {
+      get () {
+        return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
+      },
+      set (value) {
+        return this.updateBackgroundColour(value)
+      }
     },
-    coordinates () {
-      return this.currentElement ? {x: this.currentElement.properties.x, y: this.currentElement.properties.y} : {x: 0, y: 0}
+    xPosition: {
+      get () {
+        return Number(this.currentElement.properties.x.substr(0, this.currentElement.properties.x.length - 2))
+      },
+      set (value) {
+        this.updateX({element: this.currentElement, value: `${value}px`})
+      }
+    },
+    yPosition: {
+      get () {
+        return Number(this.currentElement.properties.y.substr(0, this.currentElement.properties.y.length - 2))
+      },
+      set (value) {
+        this.updateY({element: this.currentElement, value: `${value}px`})
+      }
+    },
+    fontFamily: {
+      get () {
+        return this.currentElement.properties.fontFamily
+      },
+      set (value) {
+        this.updateFontFamily({element: this.currentElement, value})
+      }
+    },
+    fontSize: {
+      get () {
+        return Number(this.currentElement.properties.fontSize.substr(0, this.currentElement.properties.fontSize.length - 2))
+      },
+      set (value) {
+        this.updateFontSize({element: this.currentElement, value: `${value}px`})
+      }
     }
   },
   methods: {
-    ...mapActions('editor', ['updateBackgroundColour'])
+    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize']),
+    toggleSection (e) {
+      let sectionEl = e.currentTarget.parentElement.parentElement
+      sectionEl.classList.toggle('hidden')
+    }
   }
 }
 </script>

@@ -14,8 +14,19 @@ const presentations = [
               x: '100px',
               y: '100px',
               fontFamily: 'Verdana',
-              fontSize: 30,
-              content: 'Slide 1'
+              fontSize: '30px',
+              content: 'Slide 1 text'
+            }
+          },
+          {
+            id: 1,
+            type: 'TEXT',
+            properties: {
+              x: '0px',
+              y: '200px',
+              fontFamily: 'Trebuchet MS',
+              fontSize: '50px',
+              content: 'Some other text'
             }
           }
         ]
@@ -30,7 +41,7 @@ const presentations = [
               x: '100px',
               y: '200px',
               fontFamily: 'Trebuchet MS',
-              fontSize: 30,
+              fontSize: '30px',
               content: 'Slide 2'
             }
           }

@@ -68,6 +68,22 @@ const actions = {
 
   updateBackgroundColour ({commit}, {target: {value}}) {
     commit('setBackgroundColour', value)
+  },
+
+  updateX ({commit}, {element, value}) {
+    commit('setElementX', {element, value})
+  },
+
+  updateY ({commit}, {element, value}) {
+    commit('setElementY', {element, value})
+  },
+
+  updateFontFamily ({commit}, {element, value}) {
+    commit('setElementFontFamily', {element, value})
+  },
+
+  updateFontSize ({commit}, {element, value}) {
+    commit('setElementFontSize', {element, value})
   }
 }
 
@@ -114,6 +130,38 @@ const mutations = {
     }
 
     state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
+  },
+
+  setElementX (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the X coordinate for an element (element was null)')
+      return null
+    }
+    element.properties.x = value
+  },
+
+  setElementY (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the Y coordinate for an element (element was null)')
+      return null
+    }
+    element.properties.y = value
+  },
+
+  setElementFontFamily (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the font family for an element (element was null)')
+      return null
+    }
+    element.properties.fontFamily = value
+  },
+
+  setElementFontSize (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the font size for an element (element was null)')
+      return null
+    }
+    element.properties.fontSize = value
   }
 }
 

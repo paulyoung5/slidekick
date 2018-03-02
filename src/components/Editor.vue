@@ -37,6 +37,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
 import Inspector from './Inspector.vue'
