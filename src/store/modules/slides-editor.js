@@ -58,6 +58,10 @@ const actions = {
     commit('zoomOut')
   },
 
+  updateTitle ({commit}, value) {
+    commit('setTitle', value)
+  },
+
   selectSlideFromList ({commit}, selectedSlideIndex) {
     commit('setSelectedSlideIndex', selectedSlideIndex)
   },
