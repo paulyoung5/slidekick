@@ -64,7 +64,9 @@ export default {
       this.$store.commit('editor/setSelectedElementIndex', index)
     },
     clearInspector (e) {
-      this.$store.commit('editor/setSelectedElementIndex', null)
+      if (e.target.tagName === 'svg') {
+        this.$store.commit('editor/setSelectedElementIndex', null)
+      }
     }
   }
 }

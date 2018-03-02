@@ -146,8 +146,8 @@
         <label>Fill</label>
         <input type="color" v-model="fill">
 
-        <label>Size</label>
-        <input type="number" step="5" min="10" v-model="fontSize">
+        <label>Value</label>
+        <input type="text" v-model="content">
       </div>
     </div>
   </div>
@@ -207,6 +207,14 @@ export default {
         this.updateFill({element: this.currentElement, value})
       }
     },
+    content: {
+      get () {
+        return this.currentElement && this.currentElement.properties.content ? this.currentElement.properties.content : ''
+      },
+      set (value) {
+        this.updateContent({element: this.currentElement, value})
+      }
+    },
     fontFamily: {
       get () {
         return this.currentElement.properties.fontFamily
@@ -225,7 +233,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize', 'updateFill']),
+    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize', 'updateFill', 'updateContent']),
     toggleSection (e) {
       let sectionEl = e.currentTarget.parentElement.parentElement
       sectionEl.classList.toggle('hidden')
