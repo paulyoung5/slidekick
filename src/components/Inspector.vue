@@ -147,7 +147,7 @@
         </select>
 
         <label>Size</label>
-        <input type="number" step="5" min="10" v-model="fontSize">
+        <input type="number" step="5" min="10" max="200" v-model="fontSize">
       </div>
     </div>
   </div>
