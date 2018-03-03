@@ -12,6 +12,7 @@
 
   .colour-picker .preview {
     grid-area: preview;
+    cursor: pointer;
     padding: 8px;
     border-radius: 10px;
     margin: 5px;
@@ -29,7 +30,7 @@
 <template>
   <div class="colour-picker">
     <input readonly type="text" :value="hex" @focus.stop="active = true">
-    <div class="preview" :style="previewStyle"></div>
+    <div class="preview" :style="previewStyle" @click.stop="active = true"></div>
     <div class="picker" v-show="active">
       <compact-picker v-model="hex"></compact-picker>
     </div>

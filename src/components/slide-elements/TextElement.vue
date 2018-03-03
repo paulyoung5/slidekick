@@ -19,7 +19,7 @@
 
   g.inspecting .bbox {
     stroke-linecap: round;
-    stroke: var(--primary-colour);
+    stroke: rgba(0, 0, 0, 0.6);
     stroke-dasharray: 15px;
     animation: rotateDashes 5s infinite linear;
   }
