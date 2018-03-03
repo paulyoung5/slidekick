@@ -108,7 +108,7 @@
 </style>
 
 <template>
-  <div class="presenter" :class="computedStyles">
+  <div class="presenter" :class="computedStyles" @click="touchscreenTrigger">
     <div class="presenter-toolbar">
       <div class="left">
         <router-link to="/" class="brand">
@@ -137,7 +137,7 @@
         </a>
       </div>
 
-      <div class="right">
+      <div class="right" v-show="supportsFullscreen">
         <a href="#" @click="enterFullscreen" v-if="!fullscreen">
           <i class="material-icons">fullscreen</i> Fullscreen
         </a>
@@ -172,6 +172,13 @@ export default {
       return {
         'ui-hidden': !this.showUI
       }
+    },
+    supportsFullscreen () {
+      const element = document.querySelector('body')
+      return element.requestFullscreen ||
+            element.mozRequestFullScreen ||
+            element.webkitRequestFullscreen ||
+            element.msRequestFullscreen
     }
   },
   methods: {
@@ -223,6 +230,9 @@ export default {
         this.showUI = false
         this.movemoveTimerActive = false
       }, 5000)
+    },
+    touchscreenTrigger () {
+      this.onMousemove()
     }
   },
   created () {
