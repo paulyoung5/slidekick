@@ -1,4 +1,14 @@
 <style scoped>
+  @keyframes rotateDashes {
+    0% {
+      stroke-dashoffset: 0;
+    }
+
+    100% {
+      stroke-dashoffset: 60;
+    }
+  }
+
   g:hover {
     cursor: pointer;
   }
@@ -8,13 +18,16 @@
   }
 
   g.inspecting .bbox {
+    stroke-linecap: round;
     stroke: var(--primary-colour);
+    stroke-dasharray: 15px;
+    animation: rotateDashes 5s infinite linear;
   }
 </style>
 
 <template>
   <g :class="computedStyles">
-    <rect class="bbox" ref="containerEl" :width="containerWidth" :height="containerHeight" :x="containerX" :y="containerY" fill="none" stroke-width="4px" stroke="none" />
+    <rect class="bbox" ref="containerEl" :width="containerWidth" :height="containerHeight" :x="containerX" :y="containerY" fill="none" stroke-width="3px" stroke="none" />
     <text
       ref="textEl"
       dominant-baseline="hanging"
