@@ -71,6 +71,31 @@
   border-color: var(--primary-colour);
 }
 
+@media only screen 
+      and (device-width : 375px) 
+      and (device-height : 812px) 
+      and (-webkit-device-pixel-ratio : 3) {
+  .slides-toolbar {
+    padding-left: env(safe-area-inset-left);
+    overflow-y: scroll;
+  }
+
+  .slides-toolbar li {
+    height: 62px;
+    padding: 0;
+  }
+
+  .slides-toolbar li a {
+    width: 100%;
+    height: 100%;
+    border-width: 4px;
+  }
+
+  .slides-toolbar li a::before {
+    display: none;
+  }
+}
+
 @media (max-width: 800px) {
   .slides-toolbar {
     display: none;
