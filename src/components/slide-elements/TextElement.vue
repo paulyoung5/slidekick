@@ -36,6 +36,7 @@
       :font-family="fontFamily"
       :font-size="fontSize"
       :fill="fill"
+      @mouseover="updateBBox"
       @click.stop="inspectElement(element.id)"
     >
       {{ content }}
@@ -76,10 +77,10 @@ export default {
       return this.bbox ? this.bbox.y - 10 : 0
     },
     containerWidth () {
-      return this.bbox ? `${this.bbox.width + 20}px` : '0px'
+      return this.bbox ? this.bbox.width + 20 : 0
     },
     containerHeight () {
-      return this.bbox ? `${this.bbox.height + 20}px` : '0px'
+      return this.bbox ? this.bbox.height + 20 : 0
     },
     fontFamily () {
       return this.element.properties.fontFamily
@@ -95,7 +96,19 @@ export default {
     }
   },
   watch: {
-    'element': {
+    element: {
+      handler: function () {
+        return this.updateBBox()
+      },
+      deep: true
+    },
+    currentElement: {
+      handler: function () {
+        return this.updateBBox()
+      },
+      deep: true
+    },
+    currentSlide: {
       handler: function () {
         return this.updateBBox()
       },
@@ -103,7 +116,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['inspectElement']),
+    ...mapActions('editor', ['inspectElement', 'currentElement', 'currentSlide']),
     updateBBox () {
       return this.$nextTick(() => {
         try {
@@ -113,9 +126,9 @@ export default {
           // getBBox() will throw an exception if the element
           // is not attached and rendered, but there is no reliable way to check for this
           setTimeout(() => {
-            // Try again in 2 seconds
+            // Try again in 3 seconds
             this.updateBBox()
-          }, 2000)
+          }, 3000)
         }
       })
     }
