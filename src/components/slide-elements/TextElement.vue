@@ -14,7 +14,7 @@
   }
 
   g:hover .bbox {
-    stroke: var(--primary-colour-translucent);
+    stroke: rgba(0, 0, 0, 0.4);
   }
 
   g.inspecting .bbox {
