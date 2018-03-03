@@ -75,8 +75,17 @@
   justify-content: stretch;
 }
 
-.inspector .section .options input {
+.inspector .section .options > :not(label):not(.colour-picker),
+.inspector .section .options > .colour-picker input {
   width: 100%;
+  background-color: white;
+  padding: 0.5em 0.7em;
+  border: 0;
+  outline: 2px solid rgba(0, 0, 0, 0.2);
+}
+.inspector .section .options > :not(label):not(.colour-picker):focus,
+.inspector .section .options > .colour-picker input:focus {
+  outline-color: rgba(0, 0, 0, 0.4);
 }
 
 .inspector.inspecting .slide-properties.section  {
