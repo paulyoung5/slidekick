@@ -29,9 +29,9 @@
 
 <template>
   <div class="colour-picker">
-    <input readonly type="text" :value="hex" @focus.stop="active = true" @keyup.esc="active = false">
-    <div class="preview" :style="previewStyle" @click.stop="active = true"></div>
-    <div class="picker" v-show="active">
+    <input ref="field" readonly type="text" :value="hex" @focus="active = true" @keyup.esc="active = false" @blur.passive="active = false">
+    <div class="preview" :style="previewStyle" @click="active = true"></div>
+    <div class="picker" @mousedown.prevent="onMousedown" v-show="active">
       <compact-picker v-model="hex" :disableAlpha="true"></compact-picker>
     </div>
   </div>
@@ -66,6 +66,12 @@ export default {
       return {
         'background-color': this.value
       }
+    }
+  },
+  methods: {
+    onMousedown () {
+      // Prevent loss of focus from input event when using colour picker
+      this.$refs.field.focus()
     }
   }
 }
