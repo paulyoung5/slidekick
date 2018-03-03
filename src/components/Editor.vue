@@ -65,8 +65,19 @@
   }
 }
 
+@keyframes highlightFlash {
+  0% {
+    opacity: 1;
+    width: 100%;
+  }
+  100% {
+    opacity: 0;
+    width: 0;
+  }
+}
+
 .editor .slides-toolbar {
-  animation: 0.4s ease-in-out 0s 1 slideInFromLeft;
+  animation: 0.4s ease-in-out 0.1s 1 slideInFromLeft;
 }
 
 .editor .current-slide {
@@ -74,15 +85,31 @@
 }
 
 .editor .inspector {
-  animation: 0.4s ease-in-out 0s 1 slideInFromRight;
+  animation: 0.4s ease-in-out 0.1s 1 slideInFromRight;
+}
+
+.inspector.changed::before {
+  content: "";
+  background-color: rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  right: 0;
+  z-index: 5;
+  opacity: 0;
+  animation: highlightFlash 0.7s;
+  -webkit-animation-iteration-count: 1;
+  -moz-animation-iteration-count: 1;
+  animation-iteration-count: 1;
 }
 
 .editor .toolbox {
-  animation: 0.4s ease-in-out 0s 1 slideInFromTop;
+  animation: 0.4s ease-in-out 0.1s 1 slideInFromTop;
 }
 
 .editor .slide-controls {
-  animation: 0.4s ease-in-out 0s 1 slideInFromBottom;
+  animation: 0.4s ease-in-out 0.1s 1 slideInFromBottom;
 }
 
 @media (max-width: 800px) {
