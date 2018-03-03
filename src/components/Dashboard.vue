@@ -6,6 +6,17 @@
       "dashboard-header"
       "my-presentations"
     ;
+    overflow-y: scroll;
+  }
+
+  /* Add extra side padding for iphone X users */
+  @media only screen 
+        and (device-width : 375px) 
+        and (device-height : 812px) 
+        and (-webkit-device-pixel-ratio : 3) {
+    .user-dashboard {
+      padding: 0 calc(env(safe-area-inset-right) + 0.5em) 0 calc(env(safe-area-inset-left) + 0.5em)
+    }
   }
 
   .dashboard-header {
@@ -120,15 +131,16 @@
     grid-area: manage;
   }
 
-  @media (max-width: 600px) {
+  @media
+  (orientation: landscape) and (max-width: 820px),
+  (orientation: portrait) and (max-width: 300px) {
     .my-presentations {
       grid-template-columns: 1fr;
-      grid-template-rows: auto;
-      grid-auto-rows: auto;
+      grid-template-rows: 125px;
       align-content: start;
     }
 
-     .my-presentations > a .preview {
+    .my-presentations > a .preview {
       display: none;
     }
   }
