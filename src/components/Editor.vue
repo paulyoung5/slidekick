@@ -10,6 +10,81 @@
   overflow: hidden;
 }
 
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0.5;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0.5;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0.5;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    opacity: 0.5;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.editor .slides-toolbar {
+  animation: 0.4s ease-in-out 0s 1 slideInFromLeft;
+}
+
+.editor .current-slide {
+  animation: 0.4s ease-in-out 0s 1 scale;
+}
+
+.editor .inspector {
+  animation: 0.4s ease-in-out 0s 1 slideInFromRight;
+}
+
+.editor .toolbox {
+  animation: 0.4s ease-in-out 0s 1 slideInFromTop;
+}
+
+.editor .slide-controls {
+  animation: 0.4s ease-in-out 0s 1 slideInFromBottom;
+}
+
 @media (max-width: 800px) {
   .editor {
       grid-template-columns: 1fr;

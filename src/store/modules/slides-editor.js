@@ -70,7 +70,7 @@ const actions = {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
 
-  updateBackgroundColour ({commit}, {target: {value}}) {
+  updateBackgroundColour ({commit}, value) {
     commit('setBackgroundColour', value)
   },
 
