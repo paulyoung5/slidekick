@@ -58,6 +58,10 @@ const actions = {
     commit('zoomOut')
   },
 
+  updateTitle ({commit}, value) {
+    commit('setTitle', value)
+  },
+
   selectSlideFromList ({commit}, selectedSlideIndex) {
     commit('setSelectedSlideIndex', selectedSlideIndex)
   },
@@ -66,8 +70,32 @@ const actions = {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
 
-  updateBackgroundColour ({commit}, {target: {value}}) {
+  updateBackgroundColour ({commit}, value) {
     commit('setBackgroundColour', value)
+  },
+
+  updateX ({commit}, {element, value}) {
+    commit('setElementX', {element, value})
+  },
+
+  updateY ({commit}, {element, value}) {
+    commit('setElementY', {element, value})
+  },
+
+  updateFontFamily ({commit}, {element, value}) {
+    commit('setElementFontFamily', {element, value})
+  },
+
+  updateFontSize ({commit}, {element, value}) {
+    commit('setElementFontSize', {element, value})
+  },
+
+  updateFill ({commit}, {element, value}) {
+    commit('setElementFill', {element, value})
+  },
+
+  updateContent ({commit}, {element, value}) {
+    commit('setElementContent', {element, value})
   }
 }
 
@@ -114,6 +142,54 @@ const mutations = {
     }
 
     state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
+  },
+
+  setElementX (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the X coordinate for an element (element was null)')
+      return null
+    }
+    element.properties.x = value
+  },
+
+  setElementY (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the Y coordinate for an element (element was null)')
+      return null
+    }
+    element.properties.y = value
+  },
+
+  setElementFontFamily (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the font family for an element (element was null)')
+      return null
+    }
+    element.properties.fontFamily = value
+  },
+
+  setElementFontSize (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the font size for an element (element was null)')
+      return null
+    }
+    element.properties.fontSize = value
+  },
+
+  setElementFill (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the fill for an element (element was null)')
+      return null
+    }
+    element.properties.fill = value
+  },
+
+  setElementContent (state, {element, value}) {
+    if (!element) {
+      console.error('Failed to set the content for an element (element was null)')
+      return null
+    }
+    element.properties.content = value
   }
 }
 

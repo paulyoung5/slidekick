@@ -153,7 +153,7 @@
         </router-link>
 
         <div class="presentation-title" v-if="editorMode">
-          <input type="text" :value="title">
+          <input type="text" v-model="presentationTitle">
           <i class="material-icons">edit</i>
         </div>
       </div>
@@ -179,13 +179,22 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'top-bar',
   computed: {
     ...mapGetters(['pageLoading']),
     ...mapGetters('editor', ['title', 'presentationId']),
+
+    presentationTitle: {
+      get () {
+        return this.title
+      },
+      set (value) {
+        this.updateTitle(value)
+      }
+    },
 
     hideTopBar () {
       return this.$route.meta.hideTopBar
@@ -199,6 +208,9 @@ export default {
     user () {
       return false
     }
+  },
+  methods: {
+    ...mapActions('editor', ['updateTitle'])
   }
 }
 </script>
