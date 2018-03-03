@@ -5,7 +5,14 @@
     position: relative;
   }
 
-  .picker {
+  .colour-picker input::before {
+    content: "";
+    display: inline-block;
+    background-color: red;
+    padding: 5px;
+  }
+
+  .colour-picker .picker {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
@@ -43,6 +50,7 @@ export default {
         return this.value
       },
       set ({hex: value}) {
+        this.active = false
         return this.$emit('update:value', value)
       }
     }
