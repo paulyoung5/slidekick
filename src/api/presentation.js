@@ -11,11 +11,24 @@ const presentations = [
             id: 0,
             type: 'TEXT',
             properties: {
-              x: '100px',
-              y: '100px',
+              x: '30px',
+              y: '30px',
+              fill: '#000000',
               fontFamily: 'Verdana',
-              fontSize: 30,
-              content: 'Slide 1'
+              fontSize: '20px',
+              content: 'Title goes here'
+            }
+          },
+          {
+            id: 1,
+            type: 'TEXT',
+            properties: {
+              x: '30px',
+              y: '80px',
+              fill: '#000000',
+              fontFamily: 'Comic Sans MS',
+              fontSize: '15px',
+              content: 'Some other text'
             }
           }
         ]
@@ -29,8 +42,9 @@ const presentations = [
             properties: {
               x: '100px',
               y: '200px',
+              fill: '#000000',
               fontFamily: 'Trebuchet MS',
-              fontSize: 30,
+              fontSize: '30px',
               content: 'Slide 2'
             }
           }

@@ -4,6 +4,7 @@
   
   background-color: var(--medium-grey);
   z-index: 1;
+  position: relative;
   
   display: grid;
   grid-template-columns: 1fr;
@@ -18,6 +19,20 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
+}
+
+.inspector .section.hidden .options {
+  height: 0;
+  opacity: 0;
+  padding: 0;
+  transform: translateY(-100%);
+  visibility: hidden;
+  transition: 0.4s opacity transform;
+}
+
+.inspector .section.hidden .header a i {
+  transform: rotate(180deg);
+  transition: 0.4s all;
 }
 
 .inspector .section .header {
@@ -61,8 +76,36 @@
   justify-content: stretch;
 }
 
-.inspector .section .options input {
+.inspector .section .options > :not(label):not(.colour-picker),
+.inspector .section .options > .colour-picker input {
   width: 100%;
+  background-color: white;
+  padding: 0.5em 0.7em;
+  border: 0;
+  outline: 2px solid rgba(0, 0, 0, 0.2);
+}
+.inspector .section .options > :not(label):not(.colour-picker):focus,
+.inspector .section .options > .colour-picker input:focus {
+  outline-color: rgba(0, 0, 0, 0.4);
+}
+
+.inspector.inspecting .slide-properties.section  {
+  display: none;
+}
+
+.inspector .appearance.section,
+.inspector .position.section,
+.inspector .font.section {
+  display: none;
+}
+
+.inspector.inspecting .appearance.section,
+.inspector.inspecting .position.section  {
+  display: initial;
+}
+
+.inspector.inspecting.text-element .font.section {
+  display: initial;
 }
 
 @media (max-width: 800px) {
@@ -73,27 +116,68 @@
 </style>
 
 <template>
-  <div class="inspector">
-    <div class="section" v-if="!currentElement">
+  <div class="inspector" :class="computedStyles">
+    <div class="slide-properties section">
       <div class="header">
         <span>PROPERTIES</span>
-        <a href="#"><i class="material-icons">arrow_drop_down</i></a>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
       </div>
 
       <div class="options">
-      <label>Background</label> <input type="color" :value="backgroundColour" @input="updateBackgroundColour">
+        <label>Background</label>
+        <colour-picker :value.sync="backgroundColour"></colour-picker>
       </div>
     </div>
 
-    <div class="section" v-else>
+    <div class="appearance section">
       <div class="header">
-        <span>POSITION</span>
-        <a href="#"><i class="material-icons">arrow_drop_down</i></a>
+        <span>APPEARANCE</span>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
       </div>
 
       <div class="options">
-        <label>X</label> <input type="text" v-model="coordinates.x">
-        <label>Y</label> <input type="text" v-model="coordinates.y">
+        <label>Fill</label>
+        <colour-picker :value.sync="fill"></colour-picker>
+
+        <label>Value</label>
+        <input type="text" v-model="content">
+      </div>
+    </div>
+
+    <div class="position section">
+      <div class="header">
+        <span>POSITION</span>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
+      </div>
+
+      <div class="options">
+        <label>X</label> <input type="number" min="0" step="1" v-model="xPosition">
+        <label>Y</label> <input type="number" min="0" step="1" v-model="yPosition">
+      </div>
+    </div>
+
+    <div class="font section">
+      <div class="header">
+        <span>FONT</span>
+        <a href="#" @click.prevent="toggleSection">
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
+      </div>
+
+      <div class="options">
+        <label>Family</label>
+        <select v-model="fontFamily">
+          <option v-for="font in fonts" :value="font.name">{{ font.name }}</option>
+        </select>
+
+        <label>Size</label>
+        <input type="number" step="5" min="10" max="200" v-model="fontSize">
       </div>
     </div>
   </div>
@@ -101,20 +185,107 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import ColourPicker from './ColourPicker'
 
 export default {
   name: 'inspector',
+  components: {
+    'colour-picker': ColourPicker
+  },
+  data () {
+    return {
+      fonts: [
+        {name: 'Arial'},
+        {name: 'Verdana'},
+        {name: 'Helvetica'},
+        {name: 'Comic Sans MS'},
+        {name: 'Impact'},
+        {name: 'Times New Roman'},
+        {name: 'Georgia'},
+        {name: 'Courier'},
+        {name: 'Courier New'}
+      ]
+    }
+  },
   computed: {
     ...mapGetters('editor', ['currentSlide', 'currentElement']),
-    backgroundColour () {
-      return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
+    computedStyles () {
+      return {
+        'inspecting': this.currentElement,
+        'text-element': this.currentElement ? this.currentElement && this.currentElement.type === 'TEXT' : false
+      }
     },
-    coordinates () {
-      return this.currentElement ? {x: this.currentElement.properties.x, y: this.currentElement.properties.y} : {x: 0, y: 0}
+    backgroundColour: {
+      get () {
+        return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
+      },
+      set (value) {
+        return this.updateBackgroundColour(value)
+      }
+    },
+    xPosition: {
+      get () {
+        return this.currentElement ? Number(this.currentElement.properties.x.substr(0, this.currentElement.properties.x.length - 2)) : 0
+      },
+      set (value) {
+        this.updateX({element: this.currentElement, value: `${value}px`})
+      }
+    },
+    yPosition: {
+      get () {
+        return this.currentElement ? Number(this.currentElement.properties.y.substr(0, this.currentElement.properties.y.length - 2)) : 0
+      },
+      set (value) {
+        this.updateY({element: this.currentElement, value: `${value}px`})
+      }
+    },
+    fill: {
+      get () {
+        return this.currentElement && this.currentElement.properties.fill ? this.currentElement.properties.fill : '#000000'
+      },
+      set (value) {
+        this.updateFill({element: this.currentElement, value})
+      }
+    },
+    content: {
+      get () {
+        return this.currentElement && this.currentElement.properties.content ? this.currentElement.properties.content : ''
+      },
+      set (value) {
+        this.updateContent({element: this.currentElement, value})
+      }
+    },
+    fontFamily: {
+      get () {
+        return this.currentElement ? this.currentElement.properties.fontFamily : ''
+      },
+      set (value) {
+        this.updateFontFamily({element: this.currentElement, value})
+      }
+    },
+    fontSize: {
+      get () {
+        return this.currentElement ? Number(this.currentElement.properties.fontSize.substr(0, this.currentElement.properties.fontSize.length - 2)) : '0px'
+      },
+      set (value) {
+        this.updateFontSize({element: this.currentElement, value: `${value}px`})
+      }
+    }
+  },
+  watch: {
+    currentElement: function () {
+      this.$el.classList.remove('changed')
+      setTimeout(() => {
+        this.$el.classList.add('changed')
+      }, 100)
     }
   },
   methods: {
-    ...mapActions('editor', ['updateBackgroundColour'])
+    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize', 'updateFill', 'updateContent']),
+    toggleSection (e) {
+      let sectionEl = e.currentTarget.parentElement.parentElement
+      sectionEl.classList.toggle('hidden')
+    }
   }
 }
 </script>

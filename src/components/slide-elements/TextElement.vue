@@ -1,27 +1,43 @@
-<style>
+<style scoped>
+  @keyframes rotateDashes {
+    0% {
+      stroke-dashoffset: 0;
+    }
 
+    100% {
+      stroke-dashoffset: 60;
+    }
+  }
+
+  g:hover {
+    cursor: pointer;
+  }
+
+  g:hover .bbox {
+    stroke: rgba(0, 0, 0, 0.4);
+  }
+
+  g.inspecting .bbox {
+    stroke-linecap: round;
+    stroke: rgba(0, 0, 0, 0.6);
+    stroke-dasharray: 15px;
+    animation: rotateDashes 5s infinite linear;
+  }
 </style>
 
 <template>
-  <g class="hoverableElement">
-    <rect
-      ref="containerEl"
-      class="hoverState"
-      :width="containerWidth"
-      :height="containerHeight"
-      :x="containerX"
-      :y="containerY"
-    />
-
+  <g :class="computedStyles">
+    <rect class="bbox" ref="containerEl" :width="containerWidth" :height="containerHeight" :x="containerX" :y="containerY" fill="none" stroke-width="2px" stroke="none" />
     <text
       ref="textEl"
-      dominant-baseline="text-before-edge"
+      dominant-baseline="hanging"
       :x="textX"
       :y="textY"
       :font-family="fontFamily"
       :font-size="fontSize"
-      @mousedown="mousedown"
-      @click="inspectElement(element.id)"
+      :fill="fill"
+      @mouseover="updateBBox"
+      @click.stop="inspectElement(element.id)"
     >
       {{ content }}
     </text>
@@ -29,7 +45,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'text-element',
@@ -37,45 +53,34 @@ export default {
   data () {
     return {
       textEl: null,
-      containerEl: null
+      containerEl: null,
+      bbox: null
     }
   },
   computed: {
+    ...mapGetters('editor', ['selectedElementIndex']),
+    computedStyles () {
+      return {
+        'inspecting': (this.selectedElementIndex === this.element.id)
+      }
+    },
     textX () {
-      return Number(this.element.properties.x.substr(0, this.element.properties.x.length - 2))
+      return this.element.properties.x
     },
     textY () {
-      return Number(this.element.properties.y.substr(0, this.element.properties.y.length - 2))
-    },
-    textHeight () {
-      if (this.textEl) {
-        const boundingRect = this.textEl.getBoundingClientRect()
-
-        return Number(boundingRect.height.toFixed(2))
-      } else {
-        return 0
-      }
-    },
-    textWidth () {
-      if (this.textEl) {
-        const boundingRect = this.textEl.getBoundingClientRect()
-
-        return boundingRect.width
-      } else {
-        return 0
-      }
+      return this.element.properties.y
     },
     containerX () {
-      return this.textX - 10
+      return this.bbox ? this.bbox.x - 10 : 0
     },
     containerY () {
-      return this.textY - 10
+      return this.bbox ? this.bbox.y - 10 : 0
     },
     containerWidth () {
-      return `${this.textWidth}px`
+      return this.bbox ? this.bbox.width + 20 : 0
     },
     containerHeight () {
-      return `${this.textHeight + 10}px`
+      return this.bbox ? this.bbox.height + 20 : 0
     },
     fontFamily () {
       return this.element.properties.fontFamily
@@ -85,38 +90,53 @@ export default {
     },
     content () {
       return this.element.properties.content
+    },
+    fill () {
+      return this.element.properties.fill
+    }
+  },
+  watch: {
+    element: {
+      handler: function () {
+        return this.updateBBox()
+      },
+      deep: true
+    },
+    currentElement: {
+      handler: function () {
+        return this.updateBBox()
+      },
+      deep: true
+    },
+    currentSlide: {
+      handler: function () {
+        return this.updateBBox()
+      },
+      deep: true
     }
   },
   methods: {
-    ...mapActions(['inspectElement']),
-    mousedown (event) {
-      const svgEl = document.querySelector('svg')
-
-      svgEl.addEventListener('mousemove', this.mousemove)
-      svgEl.addEventListener('mouseup', this.mouseup)
-    },
-    mousemove (event) {
-      const bounding = this.textEl.getBoundingClientRect()
-
-      const newX = this.textX + (event.clientX - bounding.x)
-      const newY = this.textY + (event.clientY - bounding.y)
-
-      const newXformatted = newX > 0 ? Math.floor(newX) : Math.ceil(newX)
-      const newYformatted = newY > 0 ? Math.floor(newY) : Math.ceil(newY)
-
-      this.element.properties.x = `${newXformatted}px`
-      this.element.properties.y = `${newYformatted}px`
-    },
-    mouseup (event) {
-      const svgEl = document.querySelector('svg')
-
-      svgEl.removeEventListener('mouseup', this.mouseup)
-      svgEl.removeEventListener('mousemove', this.mousemove)
+    ...mapActions('editor', ['inspectElement', 'currentElement', 'currentSlide']),
+    updateBBox () {
+      return this.$nextTick(() => {
+        try {
+          this.bbox = this.textEl.getBBox()
+        } catch (_) {
+          // Workaround for FF bug #612118 (https://bugzilla.mozilla.org/show_bug.cgi?id=612118)
+          // getBBox() will throw an exception if the element
+          // is not attached and rendered, but there is no reliable way to check for this
+          setTimeout(() => {
+            // Try again in 3 seconds
+            this.updateBBox()
+          }, 3000)
+        }
+      })
     }
   },
   mounted () {
-    this.textEl = this.$refs.textEl
     this.containerEl = this.$refs.containerEl
+    this.textEl = this.$refs.textEl
+    this.updateBBox()
   }
 }
 </script>
