@@ -83,15 +83,15 @@
   display: none;
 }
 
-.inspector.inspecting .appearance.section,
-.inspector.inspecting .position.section  {
-  display: initial;
-}
-
 .inspector .appearance.section,
 .inspector .position.section,
 .inspector .font.section {
   display: none;
+}
+
+.inspector.inspecting .appearance.section,
+.inspector.inspecting .position.section  {
+  display: initial;
 }
 
 .inspector.inspecting.text-element .font.section {
@@ -201,7 +201,7 @@ export default {
     ...mapGetters('editor', ['currentSlide', 'currentElement']),
     computedStyles () {
       return {
-        'inspecting': this.currentElement !== null,
+        'inspecting': this.currentElement,
         'text-element': this.currentElement ? this.currentElement && this.currentElement.type === 'TEXT' : false
       }
     },
