@@ -79,6 +79,25 @@
   width: 100%;
 }
 
+.inspector.inspecting .slide-properties.section  {
+  display: none;
+}
+
+.inspector.inspecting .appearance.section,
+.inspector.inspecting .position.section  {
+  display: initial;
+}
+
+.inspector .appearance.section,
+.inspector .position.section,
+.inspector .font.section {
+  display: none;
+}
+
+.inspector.inspecting.text-element .font.section {
+  display: initial;
+}
+
 @media (max-width: 800px) {
   .inspector {
     display: none;
@@ -87,8 +106,8 @@
 </style>
 
 <template>
-  <div class="inspector">
-    <div class="section" v-if="!currentElement">
+  <div class="inspector" :class="computedStyles">
+    <div class="slide-properties section">
       <div class="header">
         <span>PROPERTIES</span>
         <a href="#" @click.prevent="toggleSection">
@@ -98,11 +117,11 @@
 
       <div class="options">
         <label>Background</label>
-        <colour-picker v-model="backgroundColour"></colour-picker>
+        <colour-picker :value.sync="backgroundColour"></colour-picker>
       </div>
     </div>
 
-    <div class="section" v-if="currentElement">
+    <div class="appearance section">
       <div class="header">
         <span>APPEARANCE</span>
         <a href="#" @click.prevent="toggleSection">
@@ -112,14 +131,14 @@
 
       <div class="options">
         <label>Fill</label>
-        <colour-picker v-model="fill"></colour-picker>
+        <colour-picker :value.sync="fill"></colour-picker>
 
         <label>Value</label>
         <input type="text" v-model="content">
       </div>
     </div>
 
-    <div class="section" v-if="currentElement">
+    <div class="position section">
       <div class="header">
         <span>POSITION</span>
         <a href="#" @click.prevent="toggleSection">
@@ -133,7 +152,7 @@
       </div>
     </div>
 
-    <div class="section" v-if="currentElement && currentElement.type === 'TEXT'">
+    <div class="font section">
       <div class="header">
         <span>FONT</span>
         <a href="#" @click.prevent="toggleSection">
@@ -180,17 +199,23 @@ export default {
   },
   computed: {
     ...mapGetters('editor', ['currentSlide', 'currentElement']),
+    computedStyles () {
+      return {
+        'inspecting': this.currentElement !== null,
+        'text-element': this.currentElement ? this.currentElement && this.currentElement.type === 'TEXT' : false
+      }
+    },
     backgroundColour: {
       get () {
         return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
       },
-      set ({hex}) {
-        return this.updateBackgroundColour(hex)
+      set (value) {
+        return this.updateBackgroundColour(value)
       }
     },
     xPosition: {
       get () {
-        return Number(this.currentElement.properties.x.substr(0, this.currentElement.properties.x.length - 2))
+        return this.currentElement ? Number(this.currentElement.properties.x.substr(0, this.currentElement.properties.x.length - 2)) : 0
       },
       set (value) {
         this.updateX({element: this.currentElement, value: `${value}px`})
@@ -198,7 +223,7 @@ export default {
     },
     yPosition: {
       get () {
-        return Number(this.currentElement.properties.y.substr(0, this.currentElement.properties.y.length - 2))
+        return this.currentElement ? Number(this.currentElement.properties.y.substr(0, this.currentElement.properties.y.length - 2)) : 0
       },
       set (value) {
         this.updateY({element: this.currentElement, value: `${value}px`})
@@ -208,8 +233,8 @@ export default {
       get () {
         return this.currentElement && this.currentElement.properties.fill ? this.currentElement.properties.fill : '#000000'
       },
-      set ({hex}) {
-        this.updateFill({element: this.currentElement, value: hex})
+      set (value) {
+        this.updateFill({element: this.currentElement, value})
       }
     },
     content: {
@@ -222,7 +247,7 @@ export default {
     },
     fontFamily: {
       get () {
-        return this.currentElement.properties.fontFamily
+        return this.currentElement ? this.currentElement.properties.fontFamily : ''
       },
       set (value) {
         this.updateFontFamily({element: this.currentElement, value})
@@ -230,7 +255,7 @@ export default {
     },
     fontSize: {
       get () {
-        return Number(this.currentElement.properties.fontSize.substr(0, this.currentElement.properties.fontSize.length - 2))
+        return this.currentElement ? Number(this.currentElement.properties.fontSize.substr(0, this.currentElement.properties.fontSize.length - 2)) : '0px'
       },
       set (value) {
         this.updateFontSize({element: this.currentElement, value: `${value}px`})
