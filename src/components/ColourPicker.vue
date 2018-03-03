@@ -29,21 +29,21 @@
 
 <template>
   <div class="colour-picker">
-    <input readonly type="text" :value="hex" @focus.stop="active = true">
+    <input readonly type="text" :value="hex" @focus.stop="active = true" @keyup.esc="active = false">
     <div class="preview" :style="previewStyle" @click.stop="active = true"></div>
     <div class="picker" v-show="active">
-      <compact-picker v-model="hex"></compact-picker>
+      <compact-picker v-model="hex" :disableAlpha="true"></compact-picker>
     </div>
   </div>
 </template>
 
 <script>
-import { Compact as CompactPicker } from 'vue-color'
+import { Sketch as Picker } from 'vue-color'
 
 export default {
   name: 'colour-picker',
   components: {
-    'compact-picker': CompactPicker
+    'compact-picker': Picker
   },
   props: {
     value: String
@@ -59,7 +59,6 @@ export default {
         return this.value
       },
       set ({hex: value}) {
-        this.active = false
         return this.$emit('update:value', value)
       }
     },
