@@ -1,71 +1,72 @@
-<style>
-  text:hover {
-    cursor: default;
+<style scoped>
+  g:hover {
+    cursor: pointer;
+  }
+
+  g:hover .bbox {
+    stroke: var(--primary-colour-translucent);
+  }
+
+  g.inspecting .bbox {
+    stroke: var(--primary-colour);
   }
 </style>
 
 <template>
-  <text
-    ref="textEl"
-    dominant-baseline="hanging"
-    :x="textX"
-    :y="textY"
-    :font-family="fontFamily"
-    :font-size="fontSize"
-    :fill="fill"
-    @click.stop="inspectElement(element.id)"
-  >
-    {{ content }}
-  </text>
+  <g :class="computedStyles">
+    <rect class="bbox" ref="containerEl" :width="containerWidth" :height="containerHeight" :x="containerX" :y="containerY" fill="none" stroke-width="4px" stroke="none" />
+    <text
+      ref="textEl"
+      dominant-baseline="hanging"
+      :x="textX"
+      :y="textY"
+      :font-family="fontFamily"
+      :font-size="fontSize"
+      :fill="fill"
+      @click.stop="inspectElement(element.id)"
+    >
+      {{ content }}
+    </text>
+  </g>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'text-element',
   props: {element: Object},
   data () {
     return {
-      textEl: null
+      textEl: null,
+      containerEl: null,
+      bbox: null
     }
   },
   computed: {
+    ...mapGetters('editor', ['selectedElementIndex']),
+    computedStyles () {
+      return {
+        'inspecting': (this.selectedElementIndex === this.element.id)
+      }
+    },
     textX () {
       return this.element.properties.x
     },
     textY () {
       return this.element.properties.y
     },
-    textHeight () {
-      if (this.textEl) {
-        const boundingRect = this.textEl.getBoundingClientRect()
-
-        return Number(boundingRect.height.toFixed(2))
-      } else {
-        return 0
-      }
-    },
-    textWidth () {
-      if (this.textEl) {
-        const boundingRect = this.textEl.getBoundingClientRect()
-
-        return boundingRect.width
-      } else {
-        return 0
-      }
-    },
     containerX () {
-      return this.textX - 10
+      return this.bbox ? this.bbox.x - 10 : 0
     },
     containerY () {
-      return this.textY - 10
+      return this.bbox ? this.bbox.y - 10 : 0
     },
     containerWidth () {
-      return `${this.textWidth}px`
+      return this.bbox ? `${this.bbox.width + 20}px` : '0px'
     },
     containerHeight () {
-      return `${this.textHeight + 10}px`
+      return this.bbox ? `${this.bbox.height + 20}px` : '0px'
     },
     fontFamily () {
       return this.element.properties.fontFamily
@@ -80,11 +81,26 @@ export default {
       return this.element.properties.fill
     }
   },
+  watch: {
+    'element': {
+      handler: function () {
+        return this.updateBBox()
+      },
+      deep: true
+    }
+  },
   methods: {
-    ...mapActions('editor', ['inspectElement'])
+    ...mapActions('editor', ['inspectElement']),
+    updateBBox () {
+      return this.$nextTick(() => {
+        this.bbox = this.textEl ? this.textEl.getBBox() : null
+      })
+    }
   },
   mounted () {
+    this.containerEl = this.$refs.containerEl
     this.textEl = this.$refs.textEl
+    this.updateBBox()
   }
 }
 </script>

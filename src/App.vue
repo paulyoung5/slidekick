@@ -10,9 +10,11 @@
   /* Colour Palette */
   --primary-colour: hsl(167, 72%, 40%);
   --primary-colour-hover: hsl(167, 72%, 35%);
+  --primary-colour-translucent: hsla(167, 72%, 40%, 0.267);
   
   --dark-grey: hsl(0, 0%, 25%);
   --medium-grey: hsl(0, 0%, 40%);
+  --light-grey: hsl(0, 0%, 80%);
   
   /* Font stacks */
   --system-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
