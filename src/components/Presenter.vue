@@ -96,6 +96,15 @@
     transform: none;
     transition: all 0.4s;
   }
+
+  .presenter .current-slide g:hover {
+    cursor: default;
+  }
+  .presenter .current-slide g .bbox,
+  .presenter .current-slide g:hover .bbox,
+  .presenter .current-slide g.inspecting .bbox {
+    stroke: none;
+  }
 </style>
 
 <template>

@@ -97,7 +97,8 @@
       </div>
 
       <div class="options">
-      <label>Background</label> <input type="color" v-model="backgroundColour">
+        <label>Background</label>
+        <colour-picker v-model="backgroundColour"></colour-picker>
       </div>
     </div>
 
@@ -111,7 +112,7 @@
 
       <div class="options">
         <label>Fill</label>
-        <input type="color" v-model="fill">
+        <colour-picker v-model="fill"></colour-picker>
 
         <label>Value</label>
         <input type="text" v-model="content">
@@ -155,9 +156,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import ColourPicker from './ColourPicker'
 
 export default {
   name: 'inspector',
+  components: {
+    'colour-picker': ColourPicker
+  },
   data () {
     return {
       fonts: [
@@ -179,8 +184,8 @@ export default {
       get () {
         return this.currentSlide ? this.currentSlide.backgroundColour : '#FFFFFF'
       },
-      set (value) {
-        return this.updateBackgroundColour(value)
+      set ({hex}) {
+        return this.updateBackgroundColour(hex)
       }
     },
     xPosition: {
@@ -203,8 +208,8 @@ export default {
       get () {
         return this.currentElement && this.currentElement.properties.fill ? this.currentElement.properties.fill : '#000000'
       },
-      set (value) {
-        this.updateFill({element: this.currentElement, value})
+      set ({hex}) {
+        this.updateFill({element: this.currentElement, value: hex})
       }
     },
     content: {
