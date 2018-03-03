@@ -27,7 +27,7 @@
 
 <template>
   <g :class="computedStyles">
-    <rect class="bbox" ref="containerEl" :width="containerWidth" :height="containerHeight" :x="containerX" :y="containerY" fill="none" stroke-width="3px" stroke="none" />
+    <rect class="bbox" ref="containerEl" :width="containerWidth" :height="containerHeight" :x="containerX" :y="containerY" fill="none" stroke-width="2px" stroke="none" />
     <text
       ref="textEl"
       dominant-baseline="hanging"
@@ -97,7 +97,9 @@ export default {
   watch: {
     'element': {
       handler: function () {
-        return this.updateBBox()
+        return this.$nextTick(() => {
+          this.bbox = this.textEl ? this.textEl.getBBox() : null
+        })
       },
       deep: true
     }

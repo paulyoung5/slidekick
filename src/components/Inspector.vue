@@ -4,6 +4,7 @@
   
   background-color: var(--medium-grey);
   z-index: 1;
+  position: relative;
   
   display: grid;
   grid-template-columns: 1fr;
@@ -269,6 +270,14 @@ export default {
       set (value) {
         this.updateFontSize({element: this.currentElement, value: `${value}px`})
       }
+    }
+  },
+  watch: {
+    currentElement: function () {
+      this.$el.classList.remove('changed')
+      setTimeout(() => {
+        this.$el.classList.add('changed')
+      }, 100)
     }
   },
   methods: {
