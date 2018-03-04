@@ -158,12 +158,19 @@
         :key="textElement.id"
         :element="textElement"
       ></text-element>
+
+      <image-element
+        v-for="imageElement in imageElements"
+        :key="imageElement.id"
+        :element="imageElement"
+      ></image-element>
     </svg>
   </div>
 </template>
 
 <script>
 import TextElement from './slide-elements/TextElement'
+import ImageElement from './slide-elements/ImageElement'
 
 export default {
   name: 'current-slide',
@@ -173,7 +180,8 @@ export default {
     zoomLevel: {type: Number, default: 1}
   },
   components: {
-    'text-element': TextElement
+    'text-element': TextElement,
+    'image-element': ImageElement
   },
   computed: {
     currentSlide () {
