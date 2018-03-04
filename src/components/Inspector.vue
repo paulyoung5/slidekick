@@ -46,23 +46,22 @@
   align-items: center;
 }
 
-.inspector .section .header span {
+.inspector .section .header a:first-child {
   font-weight: bold;
   user-select: none;
   -moz-user-select: none;
 }
 
-.inspector .section .header span,
 .inspector .section .header a {
   padding: 0.3em 0.7em;
 }
 
-.inspector .section .header a {
+.inspector .section .header a:last-child {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.inspector .section .header a:hover {
+.inspector .section .header a:last-child:hover {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -83,6 +82,7 @@
   padding: 0.5em 0.7em;
   border: 0;
   outline: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0;
 }
 .inspector .section .options > :not(label):not(.colour-picker):focus,
 .inspector .section .options > .colour-picker input:focus {
@@ -108,6 +108,26 @@
   display: initial;
 }
 
+@media only screen 
+      and (device-width : 375px) 
+      and (device-height : 812px) 
+      and (-webkit-device-pixel-ratio : 3) {
+  .inspector {
+    max-height: 100%;
+    overflow-x: visible;
+    overflow-y: scroll;
+  }
+
+  .inspector .section .options {
+    padding-right: env(safe-area-inset-right) !important;
+    grid-template-columns: 1fr;
+  }
+
+  .inspector .section .header a:last-child {
+    visibility: hidden;
+  }
+}
+
 @media (max-width: 800px) {
   .inspector {
     display: none;
@@ -119,7 +139,7 @@
   <div class="inspector" :class="computedStyles">
     <div class="slide-properties section">
       <div class="header">
-        <span>PROPERTIES</span>
+        <a href="#" @click.prevent="toggleSection">PROPERTIES</a>
         <a href="#" @click.prevent="toggleSection">
           <i class="material-icons">arrow_drop_down</i>
         </a>
@@ -133,7 +153,7 @@
 
     <div class="appearance section">
       <div class="header">
-        <span>APPEARANCE</span>
+        <a href="#" @click.prevent="toggleSection">APPEARANCE</a>
         <a href="#" @click.prevent="toggleSection">
           <i class="material-icons">arrow_drop_down</i>
         </a>
@@ -150,7 +170,7 @@
 
     <div class="position section">
       <div class="header">
-        <span>POSITION</span>
+        <a href="#" @click.prevent="toggleSection">POSITION</a>
         <a href="#" @click.prevent="toggleSection">
           <i class="material-icons">arrow_drop_down</i>
         </a>
@@ -164,7 +184,7 @@
 
     <div class="font section">
       <div class="header">
-        <span>FONT</span>
+        <a href="#" @click.prevent="toggleSection">FONT</a>
         <a href="#" @click.prevent="toggleSection">
           <i class="material-icons">arrow_drop_down</i>
         </a>

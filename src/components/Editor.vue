@@ -112,6 +112,15 @@
   animation: 0.4s ease-in-out 0.1s 1 slideInFromBottom;
 }
 
+@media only screen 
+      and (device-width : 375px) 
+      and (device-height : 812px) 
+      and (-webkit-device-pixel-ratio : 3) {
+  .editor {
+    grid-template-columns: 150px minmax(300px, 1fr) 150px;
+  }
+}
+
 @media (max-width: 800px) {
   .editor {
       grid-template-columns: 1fr;
