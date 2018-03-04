@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
 import ElementWrapper from './ElementWrapper'
 
 export default {
@@ -28,12 +27,6 @@ export default {
   },
   props: {element: Object},
   computed: {
-    ...mapGetters('editor', ['selectedElementIndex']),
-    computedStyles () {
-      return {
-        'inspecting': (this.selectedElementIndex === this.element.id)
-      }
-    },
     textX () {
       return this.element.properties.x
     },

@@ -91,25 +91,6 @@
   outline-color: rgba(0, 0, 0, 0.4);
 }
 
-.inspector.inspecting .slide-properties.section  {
-  display: none;
-}
-
-.inspector .appearance.section,
-.inspector .position.section,
-.inspector .font.section {
-  display: none;
-}
-
-.inspector.inspecting .appearance.section,
-.inspector.inspecting .position.section  {
-  display: initial;
-}
-
-.inspector.inspecting.text-element .font.section {
-  display: initial;
-}
-
 @media only screen 
       and (device-width : 375px) 
       and (device-height : 812px) 
@@ -138,8 +119,8 @@
 </style>
 
 <template>
-  <div class="inspector" :class="computedStyles">
-    <div class="slide-properties section">
+  <div class="inspector">
+    <div class="slide-properties section" v-if="!currentElement">
       <div class="header">
         <a href="#" @click.prevent="toggleSection">PROPERTIES</a>
         <a href="#" @click.prevent="toggleSection">
@@ -153,7 +134,7 @@
       </div>
     </div>
 
-    <div class="appearance section">
+    <div class="appearance section" v-if="isTextElement">
       <div class="header">
         <a href="#" @click.prevent="toggleSection">APPEARANCE</a>
         <a href="#" @click.prevent="toggleSection">
@@ -170,7 +151,7 @@
       </div>
     </div>
 
-    <div class="position section">
+    <div class="position section" v-if="currentElement">
       <div class="header">
         <a href="#" @click.prevent="toggleSection">POSITION</a>
         <a href="#" @click.prevent="toggleSection">
@@ -184,7 +165,7 @@
       </div>
     </div>
 
-    <div class="font section">
+    <div class="font section" v-if="isTextElement">
       <div class="header">
         <a href="#" @click.prevent="toggleSection">FONT</a>
         <a href="#" @click.prevent="toggleSection">
@@ -231,11 +212,8 @@ export default {
   },
   computed: {
     ...mapGetters('editor', ['currentSlide', 'currentElement']),
-    computedStyles () {
-      return {
-        'inspecting': this.currentElement,
-        'text-element': this.currentElement ? this.currentElement && this.currentElement.type === 'TEXT' : false
-      }
+    isTextElement () {
+      return this.currentElement ? this.currentElement && this.currentElement.type === 'TEXT' : false
     },
     backgroundColour: {
       get () {
