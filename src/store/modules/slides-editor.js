@@ -13,6 +13,35 @@ const state = {
 }
 
 const ZOOM_STEP_LEVEL = 0.2
+const DEFAULT_NEW_SLIDE = JSON.stringify({
+  backgroundColour: '#FFFFFF',
+  elements: [
+    {
+      id: 0,
+      type: 'TEXT',
+      properties: {
+        x: '30px',
+        y: '30px',
+        fill: '#000000',
+        fontFamily: 'Verdana',
+        fontSize: '20px',
+        content: 'Slide title'
+      }
+    },
+    {
+      id: 1,
+      type: 'TEXT',
+      properties: {
+        x: '30px',
+        y: '80px',
+        fill: '#000000',
+        fontFamily: 'Verdana',
+        fontSize: '15px',
+        content: 'Slide body text'
+      }
+    }
+  ]
+})
 
 const getters = {
   presentation: state => state.presentation,
@@ -66,6 +95,22 @@ const actions = {
     commit('setSelectedSlideIndex', selectedSlideIndex)
   },
 
+  createSlide ({commit}) {
+    commit('createSlide')
+  },
+
+  deleteSlide ({commit}, slideIndex) {
+    const confirm = window.confirm('Are you sure you want to delete this slide?')
+    if (confirm) {
+      commit('deleteSlide', slideIndex)
+    }
+  },
+
+  moveSlide ({commit}, {draggingSlideIndex, replaceSlideIndex}) {
+    console.log(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
+    commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
+  },
+
   inspectElement ({commit}, selectedElementIndex) {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
@@ -80,6 +125,10 @@ const actions = {
 
   updateY ({commit}, {element, value}) {
     commit('setElementY', {element, value})
+  },
+
+  updateCoordinates ({commit}, {element, x, y}) {
+    commit('setElementCoordinates', {element, x, y})
   },
 
   updateFontFamily ({commit}, {element, value}) {
@@ -136,6 +185,49 @@ const mutations = {
     state.selectedElementIndex = selectedElementIndex
   },
 
+  createSlide (state) {
+    if (!state.presentation) {
+      console.error('Unable to create a new slide')
+      return null
+    }
+
+    state.presentation.slides.push(JSON.parse(DEFAULT_NEW_SLIDE))
+    state.selectedSlideIndex = state.presentation.slides.length - 1
+  },
+
+  deleteSlide (state, slideIndex) {
+    if (!state.presentation.slides.length || !state.presentation.slides[slideIndex]) {
+      console.error('Unable to delete slide')
+      return null
+    }
+
+    // Remove the slide
+    state.presentation.slides.splice(slideIndex, 1)
+
+    // Now show the next slide, or find something else to show
+    if (!state.presentation.slides[slideIndex]) {
+      if (state.presentation.slides[slideIndex - 1] !== null) {
+        state.selectedSlideIndex = slideIndex - 1
+      } else if (state.presentation.slides.length) {
+        state.selectedSlideIndex = state.presentation.slides.length - 1
+      } else {
+        state.selectedSlideIndex = 0
+      }
+    }
+  },
+
+  moveSlide (state, {draggingSlideIndex, replaceSlideIndex}) {
+    if (!state.presentation.slides.length ||
+      !state.presentation.slides[draggingSlideIndex] ||
+      !state.presentation.slides[replaceSlideIndex]) {
+      console.error('Unable to move slide')
+      return null
+    }
+
+    state.presentation.slides.splice(draggingSlideIndex, 0, state.presentation.slides.splice(replaceSlideIndex, 1)[0])
+    state.selectedSlideIndex = replaceSlideIndex
+  },
+
   setBackgroundColour (state, newBackgroundColour) {
     if (!state.presentation.slides.length || !state.presentation.slides[state.selectedSlideIndex]) {
       return null
@@ -158,6 +250,15 @@ const mutations = {
       return null
     }
     element.properties.y = value
+  },
+
+  setElementCoordinates (state, {element, x, y}) {
+    if (!element) {
+      console.error('Failed to set coordinates for an element (element was null)')
+      return null
+    }
+    element.properties.x = x
+    element.properties.y = y
   },
 
   setElementFontFamily (state, {element, value}) {
