@@ -88,6 +88,35 @@
   animation: 0.4s ease-in-out 0.1s 1 slideInFromRight;
 }
 
+.editor .no-slides-message {
+  color: white;
+  font-size: 2em;
+  z-index: -10;
+  opacity: 0;
+  grid-row: 1 / -1;
+  grid-column: 2 / -1;
+  user-select: none;
+
+  display: grid;
+  grid-gap: 1em;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  align-items: center;
+}
+.editor .no-slides-message i {
+  padding: 0.5em;
+  border-radius: 100px;
+  border: 4px solid rgba(0, 0, 0, 0.2);
+}
+
+.editor.no-slides .no-slides-message {
+  transition: 0.4s all;
+  z-index: 5;
+  background-color: var(--dark-grey);
+  opacity: 0.9;
+}
+
 .inspector.changed::before {
   content: "";
   background-color: rgba(255, 255, 255, 0.1);
@@ -129,11 +158,15 @@
       "current-slide"
       ;
   }
+
+  .editor .no-slides-message {
+    display: none;
+  }
 }
 </style>
 
 <template>
-  <div class="editor" @click="clearInspector">
+  <div class="editor" @click="clearInspector" :class="computedStyles">
     <slides-toolbar></slides-toolbar>
 
     <toolbox></toolbox>
@@ -143,6 +176,11 @@
     <slide-controls></slide-controls>
 
     <current-slide :selected-slide-index="selectedSlideIndex" :slides="slides" :zoom-level="zoomLevel"></current-slide>
+
+    <div class="no-slides-message">
+      <i class="material-icons">create</i>
+      To get started, add a new slide
+    </div>
   </div>
 </template>
 
@@ -168,7 +206,12 @@ export default {
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
   },
   computed: {
-    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel'])
+    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
+    computedStyles () {
+      return {
+        'no-slides': !this.slides || !this.slides.length
+      }
+    }
   },
   methods: {
     inspectElement (index) {

@@ -30,6 +30,17 @@ const presentations = [
               fontSize: '15px',
               content: 'Some other text'
             }
+          },
+          {
+            id: 2,
+            type: 'IMAGE',
+            properties: {
+              x: '200px',
+              y: '200px',
+              width: '200px',
+              height: '200px',
+              href: 'https://picsum.photos/200'
+            }
           }
         ]
       },
