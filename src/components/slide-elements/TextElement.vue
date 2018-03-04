@@ -46,6 +46,8 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
+import CSSPlugin from 'gsap/CSSPlugin' // eslint-disable-line no-unused-vars
+import Draggable from 'gsap/Draggable'
 
 export default {
   name: 'text-element',
@@ -116,7 +118,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['inspectElement', 'currentElement', 'currentSlide']),
+    ...mapActions('editor', ['inspectElement', 'currentElement', 'currentSlide', 'updateCoordinates']),
     updateBBox () {
       return this.$nextTick(() => {
         try {
@@ -131,11 +133,34 @@ export default {
           }, 3000)
         }
       })
+    },
+    updateCoordinatesInStore (draggable) {
+      return this.$nextTick(() => {
+        const oldX = Number(this.element.properties.x.substr(0, this.element.properties.x.length - 2))
+        const oldY = Number(this.element.properties.y.substr(0, this.element.properties.y.length - 2))
+        const newX = Math.round(oldX + draggable.deltaX)
+        const newY = Math.round(oldY + draggable.deltaY)
+        return this.updateCoordinates({
+          element: this.element,
+          x: `${newX}px`,
+          y: `${newY}px`
+        }).then(() => {
+          draggable.update()
+        })
+      })
     }
   },
   mounted () {
     this.containerEl = this.$refs.containerEl
     this.textEl = this.$refs.textEl
+    const vm = this
+    Draggable.create(this.$el, {
+      type: 'x,y',
+      bounds: this.$el.parentElement,
+      onDragEnd: function () {
+        return vm.updateCoordinatesInStore(this)
+      }
+    })
     this.updateBBox()
   }
 }

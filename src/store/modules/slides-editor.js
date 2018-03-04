@@ -127,6 +127,10 @@ const actions = {
     commit('setElementY', {element, value})
   },
 
+  updateCoordinates ({commit}, {element, x, y}) {
+    commit('setElementCoordinates', {element, x, y})
+  },
+
   updateFontFamily ({commit}, {element, value}) {
     commit('setElementFontFamily', {element, value})
   },
@@ -246,6 +250,15 @@ const mutations = {
       return null
     }
     element.properties.y = value
+  },
+
+  setElementCoordinates (state, {element, x, y}) {
+    if (!element) {
+      console.error('Failed to set coordinates for an element (element was null)')
+      return null
+    }
+    element.properties.x = x
+    element.properties.y = y
   },
 
   setElementFontFamily (state, {element, value}) {
