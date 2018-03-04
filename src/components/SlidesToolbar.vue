@@ -4,12 +4,54 @@
   counter-reset: slides-counter;
   
   background-color: var(--medium-grey);
-  list-style: none;
-  padding: 1em;
+  box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  overflow-y: scroll;
   
   display: grid;
+  
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+.slides-toolbar ul {
+  list-style: none;
+}
+
+.slides-toolbar ul.actions {
+  display: grid;
+  align-items: center;
+  justify-items: end;
   grid-gap: 1em;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.slides-toolbar ul.actions li {
+  display: grid;
+  grid-template: 1fr / 1fr;
+}
+.slides-toolbar ul.actions li a {
+  background-color: rgba(0, 0, 0, 0.4);
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7em 1em;
+  font-weight: bold;
+}
+.slides-toolbar ul.actions li a i {
+  font-size: 1.2em;
+}
+.slides-toolbar ul.actions li a:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: 0.2s background-color;
+}
+
+.slides-toolbar ul.slides {
+  display: grid;
+  grid-gap: 1em;
+  padding: 1em;
   
   grid-template-columns: 1fr;
   align-items: start;
@@ -17,18 +59,20 @@
   justify-content: start;
 }
 
-.slides-toolbar li {
+.slides-toolbar ul.slides li {
   color: var(--dark-grey);
   border-radius: 5px;
   padding: 0.5em;
   height: 120px;
+  overflow: hidden;
   cursor: move;
+  position: relative;
   
   display: flex;
   justify-content: flex-end;
 }
 
-.slides-toolbar li a {
+.slides-toolbar ul.slides li a.preview {
   background-color: white;
   position: relative;
   width: calc(100% - 2em - 6px);
@@ -43,7 +87,7 @@
   -moz-user-select: none;
 }
 
-.slides-toolbar li a::before {
+.slides-toolbar ul.slides li a.preview::before {
   counter-increment: slides-counter;
   content: counter(slides-counter);
   
@@ -59,16 +103,67 @@
   cursor: move;
 }
 
-.slides-toolbar li:hover {
+.slides-toolbar ul.slides li:hover a.delete {
+  transition: 0.2s all;
+  transform: translateX(0);
+  visibility: visible;
+  opacity: 1;
+}
+
+.slides-toolbar ul.slides li a.delete {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(50%);
+  background-color: rgba(0, 0,0 , 0.7);
+  color: white;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  width: auto;
+  border: 0;
+  padding: 0.3em 0.5em;
+  font-size: 0.7em;
+  border-top-left-radius: 3px;
+  cursor: pointer;
+
+  display: grid;
+  grid-gap: 0.5em;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-content: space-between;
+}
+.slides-toolbar ul.slides li a.delete i {
+  font-size: 1.6em;
+}
+.slides-toolbar ul.slides li a.delete span {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.slides-toolbar ul.slides li:hover {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.slides-toolbar li.selected {
+.slides-toolbar ul.slides li.selected {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.slides-toolbar li.selected a {
+.slides-toolbar ul.slides li.selected a.preview {
   border-color: var(--primary-colour);
+}
+
+.slides-toolbar ul.slides .slides-list-enter-active,
+.slides-toolbar ul.slides .slides-list-leave-active {
+  transition: all 0.3s;
+}
+.slides-toolbar ul.slides .slides-list-enter,
+.slides-toolbar ul.slides .slides-list-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+.slides-toolbar ul.slides .slides-list-move {
+  border: 5px solid red;
+  transition: transform 1s;
 }
 
 @media only screen 
@@ -80,18 +175,18 @@
     overflow-y: scroll;
   }
 
-  .slides-toolbar li {
+  .slides-toolbar ul.slides li {
     height: 62px;
     padding: 0;
   }
 
-  .slides-toolbar li a {
+  .slides-toolbar ul.slides li a.preview {
     width: 100%;
     height: 100%;
     border-width: 4px;
   }
 
-  .slides-toolbar li a::before {
+  .slides-toolbar ul.slides li a.preview::before {
     display: none;
   }
 }
@@ -104,11 +199,27 @@
 </style>
 
 <template>
-    <ul class="slides-toolbar">
-      <li v-for="(slide, i) in slides" :key="i" :class="{'selected': selectedSlideIndex === i}">
-        <a href="#" @click="selectSlideFromList(i)">[slide {{ i + 1 }}]</a>
+  <div class="slides-toolbar">
+    <ul class="actions">
+      <li>
+        <a href="#" @click="createSlide">
+          <i class="material-icons">library_add</i>
+          <span>Add slide</span>
+        </a>
       </li>
     </ul>
+    <transition-group tag="ul" name="slides-list" class="slides">
+      <li v-for="(slide, i) in slides" :key="i" :class="{'selected': selectedSlideIndex === i}">
+        <a href="#" class="preview" @click="selectSlideFromList(i)">
+          [slide {{ i + 1 }}]
+        </a>
+        <a href="#" class="delete" @click="deleteSlide(i)">
+          <i class="material-icons">delete</i>
+          <span>Delete</span>
+        </a>
+      </li>
+    </transition-group>
+  </div>
 </template>
 
 <script>
@@ -120,7 +231,7 @@ export default {
     ...mapGetters('editor', ['slides', 'selectedSlideIndex'])
   },
   methods: {
-    ...mapActions('editor', ['selectSlideFromList'])
+    ...mapActions('editor', ['selectSlideFromList', 'createSlide', 'deleteSlide'])
   }
 }
 </script>

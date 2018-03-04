@@ -13,6 +13,35 @@ const state = {
 }
 
 const ZOOM_STEP_LEVEL = 0.2
+const DEFAULT_NEW_SLIDE = JSON.stringify({
+  backgroundColour: '#FFFFFF',
+  elements: [
+    {
+      id: 0,
+      type: 'TEXT',
+      properties: {
+        x: '30px',
+        y: '30px',
+        fill: '#000000',
+        fontFamily: 'Verdana',
+        fontSize: '20px',
+        content: 'Slide title'
+      }
+    },
+    {
+      id: 1,
+      type: 'TEXT',
+      properties: {
+        x: '30px',
+        y: '80px',
+        fill: '#000000',
+        fontFamily: 'Verdana',
+        fontSize: '12px',
+        content: 'Slide body text'
+      }
+    }
+  ]
+})
 
 const getters = {
   presentation: state => state.presentation,
@@ -64,6 +93,17 @@ const actions = {
 
   selectSlideFromList ({commit}, selectedSlideIndex) {
     commit('setSelectedSlideIndex', selectedSlideIndex)
+  },
+
+  createSlide ({commit}) {
+    commit('createSlide')
+  },
+
+  deleteSlide ({commit}, slideIndex) {
+    const confirm = window.confirm('Are you sure you want to delete this slide?')
+    if (confirm) {
+      commit('deleteSlide', slideIndex)
+    }
   },
 
   inspectElement ({commit}, selectedElementIndex) {
@@ -134,6 +174,25 @@ const mutations = {
 
   setSelectedElementIndex (state, selectedElementIndex) {
     state.selectedElementIndex = selectedElementIndex
+  },
+
+  createSlide (state) {
+    if (!state.presentation) {
+      console.error('Unable to create a new slide')
+      return null
+    }
+
+    state.presentation.slides.push(JSON.parse(DEFAULT_NEW_SLIDE))
+    state.selectedSlideIndex = state.presentation.slides.length - 1
+  },
+
+  deleteSlide (state, slideIndex) {
+    if (!state.presentation.slides.length || !state.presentation.slides[slideIndex]) {
+      console.error('Unable to delete slide')
+      return null
+    }
+
+    return state.presentation.slides.splice(slideIndex, 1)
   },
 
   setBackgroundColour (state, newBackgroundColour) {
