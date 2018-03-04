@@ -3,8 +3,10 @@
   grid-area: inspector;
   
   background-color: var(--medium-grey);
+  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.2);
   z-index: 1;
   position: relative;
+  overflow-y: scroll;
   
   display: grid;
   grid-template-columns: 1fr;
