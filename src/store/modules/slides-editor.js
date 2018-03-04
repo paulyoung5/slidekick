@@ -36,7 +36,7 @@ const DEFAULT_NEW_SLIDE = JSON.stringify({
         y: '80px',
         fill: '#000000',
         fontFamily: 'Verdana',
-        fontSize: '12px',
+        fontSize: '15px',
         content: 'Slide body text'
       }
     }

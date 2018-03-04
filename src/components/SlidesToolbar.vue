@@ -38,7 +38,7 @@
   grid-template-columns: auto 1fr;
   align-items: center;
   justify-content: space-between;
-  padding: 0.7em 1em;
+  padding: 0.5em 1em;
   font-weight: bold;
 }
 .slides-toolbar ul.actions li a i {
@@ -216,7 +216,7 @@
       <li>
         <a href="#" @click="createSlide">
           <i class="material-icons">library_add</i>
-          <span>Add slide</span>
+          <span>New slide</span>
         </a>
       </li>
     </ul>
