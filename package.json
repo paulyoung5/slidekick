@@ -15,6 +15,7 @@
     "lint-fix": "eslint --fix --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "gsap": "^1.20.4",
     "vue": "^2.5.2",
     "vue-color": "^2.4.5",
     "vue-router": "^3.0.1",
