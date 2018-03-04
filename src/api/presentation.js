@@ -35,11 +35,11 @@ const presentations = [
             id: 2,
             type: 'IMAGE',
             properties: {
-              x: '200px',
-              y: '200px',
-              width: '200px',
-              height: '200px',
-              href: 'https://picsum.photos/200'
+              x: '265px',
+              y: '45px',
+              width: '150px',
+              height: '150px',
+              href: 'https://picsum.photos/150'
             }
           }
         ]
