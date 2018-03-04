@@ -62,6 +62,92 @@
 .presenter .current-slide > * {
   cursor: default;
 }
+
+@keyframes fadeIn {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0.5;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0.5;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0.5;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.presenter .current-slide.fadeIn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  background-color: white;
+  z-index: 10;
+  animation: 1s ease-in-out 0.1s 1 fadeIn;
+}
+
+.presenter .current-slide.slideDown {
+  animation: 0.4s ease-in-out 0.1s 1 slideDown;
+  transform: none;
+}
+
+.presenter .current-slide.slideUp {
+  animation: 0.4s ease-in-out 0.1s 1 slideUp;
+  transform: none;
+}
+
+.presenter .current-slide.slideInRight {
+  animation: 0.4s ease-in-out 0.1s 1 slideInRight;
+  transform: none;
+}
+
+.presenter .current-slide.scaleIn {
+  animation: 0.4s ease-in-out 0.1s 1 scaleIn;
+  transform: none;
+}
 </style>
 
 <template>

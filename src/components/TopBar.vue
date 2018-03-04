@@ -2,6 +2,12 @@
 .top-bar {
   grid-area: top-bar;
   
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
+  background-color: var(--dark-grey);
   border-bottom: 4px solid var(--primary-colour);
   transition: 0.3s all ease-in-out;
   
@@ -135,6 +141,22 @@
 .secondary-actions a:hover {
   background-color: rgba(255, 255, 255, 0.9);
   color: var(--dark-grey);
+}
+
+@media only screen 
+      and (device-width : 375px) 
+      and (device-height : 812px) 
+      and (-webkit-device-pixel-ratio : 3) {
+  .top-bar {
+    /* Status bar height on iOS 10 */
+    padding: 20px 20px 0 20px;
+
+    /* Status bar height on iOS 11.0 */
+    padding-top: calc(constant(safe-area-inset-top) - 10px) calc(constant(safe-area-inset-right) - 2em) 0 calc(constant(safe-area-inset-left) - 2em);
+
+    /* Status bar height on iOS 11+ */
+    padding: calc(env(safe-area-inset-top) - 10px) calc(env(safe-area-inset-right) - 2em) 0 calc(env(safe-area-inset-left) - 2em);
+  }
 }
 
 @media (max-width: 800px) {

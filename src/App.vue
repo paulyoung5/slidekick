@@ -25,8 +25,16 @@
   --canvas-background-colour: white;
 }
 
-html, body {
-  height: 100vh;
+html {
+  -webkit-locale: en-GB;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-text-size-adjust: 100%;
+}
+
+html, body, .app {
+  background-color: var(--dark-grey);
+  max-height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -47,10 +55,14 @@ a {
 
 .app {
   background-color: var(--dark-grey);
+  margin-top: 64px;
+  margin-top: calc(env(safe-area-inset-top) + 64px);
+  height: calc(100vh - 64px);
+  height: calc(100vh - (env(safe-area-inset-top) + 64px));
 
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: 1fr;
   grid-template-areas:
     "top-bar"
     "router-view"
@@ -58,20 +70,12 @@ a {
 }
 
 .app.top-bar-hidden {
+  margin-top: 0;
+  height: 100vh;
   grid-template-rows: 1fr;
   grid-template-areas:
     "router-view"
   ;
-}
-
-/* Add extra side padding for iphone X users */
-@media only screen 
-    and (device-width : 375px) 
-    and (device-height : 812px) 
-    and (-webkit-device-pixel-ratio : 3) {
-  .content {
-    padding: 2em;
-  }
 }
 </style>
 
