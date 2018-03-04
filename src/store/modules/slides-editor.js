@@ -106,6 +106,11 @@ const actions = {
     }
   },
 
+  moveSlide ({commit}, {draggingSlideIndex, replaceSlideIndex}) {
+    console.log(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
+    commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
+  },
+
   inspectElement ({commit}, selectedElementIndex) {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
@@ -192,7 +197,31 @@ const mutations = {
       return null
     }
 
-    return state.presentation.slides.splice(slideIndex, 1)
+    // Remove the slide
+    state.presentation.slides.splice(slideIndex, 1)
+
+    // Now show the next slide, or find something else to show
+    if (!state.presentation.slides[slideIndex]) {
+      if (state.presentation.slides[slideIndex - 1] !== null) {
+        state.selectedSlideIndex = slideIndex - 1
+      } else if (state.presentation.slides.length) {
+        state.selectedSlideIndex = state.presentation.slides.length - 1
+      } else {
+        state.selectedSlideIndex = 0
+      }
+    }
+  },
+
+  moveSlide (state, {draggingSlideIndex, replaceSlideIndex}) {
+    if (!state.presentation.slides.length ||
+      !state.presentation.slides[draggingSlideIndex] ||
+      !state.presentation.slides[replaceSlideIndex]) {
+      console.error('Unable to move slide')
+      return null
+    }
+
+    state.presentation.slides.splice(draggingSlideIndex, 0, state.presentation.slides.splice(replaceSlideIndex, 1)[0])
+    state.selectedSlideIndex = replaceSlideIndex
   },
 
   setBackgroundColour (state, newBackgroundColour) {
