@@ -6,6 +6,7 @@
   background-color: var(--medium-grey);
   box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  overflow-x: hidden;
   overflow-y: scroll;
   
   display: grid;
@@ -64,12 +65,26 @@
   border-radius: 5px;
   padding: 0.5em;
   height: 120px;
-  overflow: hidden;
-  cursor: move;
   position: relative;
   
   display: flex;
   justify-content: flex-end;
+}
+
+.slides-toolbar ul.slides li.dragging-over {
+  opacity: 0.5;
+  transform: scale(0.7);
+  transition: 0.4s all;
+}
+.slides-toolbar ul.slides li.dragging-over::before {
+  content: '';
+  z-index: 4;
+  background-color: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .slides-toolbar ul.slides li a.preview {
@@ -105,7 +120,6 @@
 
 .slides-toolbar ul.slides li:hover a.delete {
   transition: 0.2s all;
-  transform: translateX(0);
   visibility: visible;
   opacity: 1;
 }
@@ -113,7 +127,6 @@
 .slides-toolbar ul.slides li a.delete {
   visibility: hidden;
   opacity: 0;
-  transform: translateX(50%);
   background-color: rgba(0, 0,0 , 0.7);
   color: white;
   position: absolute;
@@ -162,8 +175,7 @@
   transform: scale(0.5);
 }
 .slides-toolbar ul.slides .slides-list-move {
-  border: 5px solid red;
-  transition: transform 1s;
+  transition: transform 0.4s;
 }
 
 @media only screen 
@@ -209,7 +221,15 @@
       </li>
     </ul>
     <transition-group tag="ul" name="slides-list" class="slides">
-      <li v-for="(slide, i) in slides" :key="i" :class="{'selected': selectedSlideIndex === i}">
+      <li
+        draggable="true"
+        @dragstart="dragstart(i)"
+        @dragover.prevent="dragover(i)"
+        @dragend.prevent="dragend"
+        v-for="(slide, i) in slides"
+        :key="i"
+        :class="{'selected': selectedSlideIndex === i, 'dragging-over': draggingSlideIndex !== i && replaceSlideIndex === i}"
+      >
         <a href="#" class="preview" @click="selectSlideFromList(i)">
           [slide {{ i + 1 }}]
         </a>
@@ -227,11 +247,33 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'slides-toolbar',
+  data () {
+    return {
+      draggingSlideIndex: null,
+      replaceSlideIndex: null
+    }
+  },
   computed: {
     ...mapGetters('editor', ['slides', 'selectedSlideIndex'])
   },
   methods: {
-    ...mapActions('editor', ['selectSlideFromList', 'createSlide', 'deleteSlide'])
+    ...mapActions('editor', ['selectSlideFromList', 'createSlide', 'deleteSlide', 'moveSlide']),
+    dragstart (slideIndex) {
+      this.draggingSlideIndex = slideIndex
+    },
+    dragover (slideIndex) {
+      this.replaceSlideIndex = slideIndex
+    },
+    dragend () {
+      if (this.draggingSlideIndex !== this.replaceSlideIndex) {
+        this.moveSlide({
+          draggingSlideIndex: this.draggingSlideIndex,
+          replaceSlideIndex: this.replaceSlideIndex
+        })
+      }
+      this.draggingSlideIndex = null
+      this.replaceSlideIndex = null
+    }
   }
 }
 </script>
