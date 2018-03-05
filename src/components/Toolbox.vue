@@ -4,21 +4,21 @@
   background-color: rgba(0, 0, 0, 0.4);
   list-style: none;
   z-index: 2;
+  padding: 0.5em;
   
-  display: flex;
-}
-
-.toolbox li {
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: repeat(3, 52px);
+  justify-items: center;
+  justify-content: center;
 }
 
 .toolbox li a {
-  padding: 1em;
+  padding: 0.7em;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 5px;
 }
 
 .toolbox li:hover a,
@@ -38,12 +38,6 @@
     <li>
       <a href="#">
         <i class="material-icons">text_fields</i>
-      </a>
-    </li>
-
-    <li>
-      <a href="#">
-        <i class="material-icons">photo</i>
       </a>
     </li>
 
