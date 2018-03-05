@@ -163,6 +163,7 @@ const mutations = {
 
   setSelectedSlideIndex (state, selectedIndex) {
     state.selectedSlideIndex = selectedIndex
+    state.selectedElementIndex = null
   },
 
   zoomIn (state) {
