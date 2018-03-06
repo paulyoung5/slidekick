@@ -36,7 +36,7 @@
 <template>
   <ul class="toolbox">
     <li>
-      <a href="#">
+      <a href="#" @click="createText">
         <i class="material-icons">text_fields</i>
       </a>
     </li>
@@ -50,7 +50,11 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 export default {
-  name: 'toolbox'
+  name: 'toolbox',
+  methods: {
+    ...mapActions('editor', ['createText'])
+  }
 }
 </script>
