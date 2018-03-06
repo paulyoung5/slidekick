@@ -2,7 +2,7 @@ const presentations = [
   {
     id: 22,
     userId: 0,
-    title: 'test title! 22',
+    title: 'test presentatio',
     slides: [
       {
         backgroundColour: '#FFFFFF',
@@ -65,12 +65,22 @@ const presentations = [
   }
 ]
 
+function httpGet (theUrl) {
+  var xmlHttp = new XMLHttpRequest()
+  xmlHttp.open('GET', theUrl, false)
+  xmlHttp.setRequestHeader('auth', token)
+  xmlHttp.send(null)
+  console.log(xmlHttp.responseText)
+  return xmlHttp.responseText
+}
+
 export default {
   getPresentation (pId) {
     // Dummy promisified return to simulate fetching from DB
     return new Promise((resolve, reject) => {
       const result = presentations.find(p => p.id === parseInt(pId))
-
+      // console.log(result)
+      httpGet('http://localhost:3010/api/slides/retreive')
       return setTimeout(() => {
         resolve(result || null)
       }, 2000)
