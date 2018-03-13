@@ -17,6 +17,7 @@
   "dependencies": {
     "@websanova/vue-auth": "^2.21.3-beta",
     "axios": "^0.18.0",
+    "node-sass": "^4.7.2",
     "vue": "^2.5.2",
     "vue-axios": "^2.0.2",
     "vue-router": "^3.0.1",
