@@ -42,6 +42,17 @@ const DEFAULT_NEW_SLIDE = JSON.stringify({
     }
   ]
 })
+const DEFAULT_NEW_TEXT = JSON.stringify({
+  type: 'TEXT',
+  properties: {
+    x: '210px',
+    y: '140px',
+    fill: '#000000',
+    fontFamily: 'Verdana',
+    fontSize: '15px',
+    content: 'New text box'
+  }
+})
 
 const getters = {
   presentation: state => state.presentation,
@@ -111,6 +122,10 @@ const actions = {
     commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
   },
 
+  createText ({commit}) {
+    commit('createText')
+  },
+
   inspectElement ({commit}, selectedElementIndex) {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
@@ -163,6 +178,7 @@ const mutations = {
 
   setSelectedSlideIndex (state, selectedIndex) {
     state.selectedSlideIndex = selectedIndex
+    state.selectedElementIndex = null
   },
 
   zoomIn (state) {
@@ -226,6 +242,19 @@ const mutations = {
 
     state.presentation.slides.splice(draggingSlideIndex, 0, state.presentation.slides.splice(replaceSlideIndex, 1)[0])
     state.selectedSlideIndex = replaceSlideIndex
+  },
+
+  createText (state) {
+    if (!state.presentation || !state.presentation.slides[state.selectedSlideIndex]) {
+      console.error('Unable to create new text element: no active presentation and/or slide')
+      return null
+    }
+    const newTextElement = JSON.parse(DEFAULT_NEW_TEXT)
+    // TODO: changeme once using database - database should be in charge of object's id! (at least when saving)
+    const newElementId = Math.max(...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
+    newTextElement.id = newElementId
+    state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
+    state.selectedElementIndex = newElementId
   },
 
   setBackgroundColour (state, newBackgroundColour) {
