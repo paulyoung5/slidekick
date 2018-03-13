@@ -16,21 +16,20 @@ Vue.router = router
 
 const axiosInstance = axios.create({ baseURL: '/api' })
 
-axiosInstance.interceptors.response.use((request, next) => {
-  next((res) => {
-    // Unauthorized Access
-    if (res.status === 401 &&
-      ['UnauthorizedAccess', 'InvalidToken'].indexOf(res.data.code) > -1) {
-      Vue.auth.logout({
-        redirect: {name: 'landing'}
-      })
-    } else if (res.status === 500) {
-      Vue.router.push({name: 'error-500'})
-    } else if (res.status === 404) {
-      // TODO: add 404 component
-      return Vue.auth.logout()
-    }
-  })
+axiosInstance.interceptors.response.use((res) => {
+  // Unauthorized Access
+  if (res.status === 401 &&
+    ['UnauthorizedAccess', 'InvalidToken'].indexOf(res.data.code) > -1) {
+    Vue.auth.logout({
+      redirect: {name: 'landing'}
+    })
+  } else if (res.status === 500) {
+    Vue.router.push({name: 'error-500'})
+  } else if (res.status === 404) {
+    // TODO: add 404 component
+    Vue.auth.logout()
+  }
+  return res
 })
 
 Vue.use(VueAxios, axiosInstance)
@@ -38,7 +37,7 @@ Vue.use(VueRouter)
 Vue.use(VueAuth, auth)
 
 /* eslint-disable no-new */
-new Vue({
+window.App = new Vue({
   el: 'main',
   store,
   router,
