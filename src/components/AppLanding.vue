@@ -2,6 +2,10 @@
   <div class="landing-container">
     <div class="content">
       <h1>Welcome to Slidekick</h1>
+      <p>
+        <router-link :to="{ name: 'auth.login' }">Log In</router-link> &bullet;
+        <router-link :to="{ name: 'auth.register' }">Register</router-link>
+      </p>
     </div>
   </div>
 </template>
