@@ -1,6 +1,8 @@
 import VueRouter from 'vue-router'
 
 const AppLanding = () => import('@/components/AppLanding')
+const LoginForm = () => import('@/components/Auth/Login')
+const RegistrationForm = () => import('@/components/Auth/Register')
 
 const Dashboard = () => import('@/components/Dashboard')
 const Editor = () => import('@/components/Editor')
@@ -12,6 +14,8 @@ export default new VueRouter({
   mode: 'history',
   routes: [
     {name: 'landing', path: '/', component: AppLanding},
+    {name: 'auth.login', path: '/login', component: LoginForm},
+    {name: 'auth.register', path: '/register', component: RegistrationForm},
     {name: 'editor', path: '/editor/:presentationId', component: Editor, meta: showLoading},
     {name: 'dashboard', path: '/dashboard', component: Dashboard, meta: showLoading},
     {name: 'page-not-found', path: '*', component: PageNotFound}
