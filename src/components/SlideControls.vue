@@ -13,8 +13,16 @@
   list-style: none;
   
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1.5fr 1fr;
   grid-gap: 2px;
+}
+
+.slide-controls .zoom li {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.2em;
+  font-size: 0.9em;
+  font-weight: bold;
+  user-select: none;
 }
 
 .slide-controls .zoom li,
@@ -25,16 +33,17 @@
 }
 
 .slide-controls .zoom li a {
-  padding: 0.2em 0.5em;
-  background-color: var(--medium-grey);
-  font-size: 0.5em;
+  font-size: 0.6em;
+  padding: 0 0.3em;
 }
 
-.slide-controls .zoom li:first-child a {
+.slide-controls .zoom li:first-child {
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 5px 0 0 5px;
 }
 
-.slide-controls .zoom li:last-child a {
+.slide-controls .zoom li:last-child {
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0 5px 5px 0;
 }
 </style>
@@ -47,6 +56,7 @@
           <i class="material-icons">zoom_in</i>
         </a>
       </li>
+      <li>{{zoomLevel | percent}}</li>
       <li>
         <a href="#" @click="zoomOut">
           <i class="material-icons">zoom_out</i>
@@ -66,6 +76,11 @@ export default {
   },
   methods: {
     ...mapActions('editor', ['zoomIn', 'zoomOut'])
+  },
+  filters: {
+    percent (value) {
+      return `${Math.round(value * 100)}%`
+    }
   },
   mounted () {
     this.canvas = document.querySelector('.current-slide svg')
