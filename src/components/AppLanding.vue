@@ -10,17 +10,11 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-.landing-container {
-  display: table;
+<style scoped>
+.landing-container .content {
+  display: table-cell;
+  vertical-align: middle;
   text-align: center;
-  min-height: 100vh;
-
-  .content {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-  }
 }
 </style>
 
