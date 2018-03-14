@@ -49,7 +49,6 @@ export default {
       }})
         .then(res => {
           this.$store.commit(AUTHENTICATE_USER, res)
-          this.$router.push({ name: 'landing' })
         })
         // eslint-disable-next-line
         .catch(err => this.error = err.message)

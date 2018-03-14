@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { AUTHENTICATE_USER } from '@/store/mutations'
 
 export default {
@@ -25,7 +26,11 @@ export default {
       error: ''
     }
   },
+  created () {
+    this.setPageLoading(false)
+  },
   methods: {
+    ...mapActions(['setPageLoading']),
     login () {
       if (!this.validate()) return
 
@@ -34,8 +39,8 @@ export default {
         password: this.password
       }})
         .then(res => {
+          this.setPageLoading(true)
           this.$store.commit(AUTHENTICATE_USER, res)
-          this.$router.push({ name: 'landing' })
         })
         // eslint-disable-next-line
         .catch(err => this.error = err.message)

@@ -17,12 +17,12 @@ const showLoading = {showLoading: true}
 export default new VueRouter({
   mode: 'history',
   routes: [
-    {name: 'landing', path: '/', component: AppLanding},
-    {name: 'auth.login', path: '/login', component: LoginForm},
-    {name: 'auth.register', path: '/register', component: RegistrationForm},
+    {name: 'landing', path: '/', component: AppLanding, meta: { auth: false }},
+    {name: 'auth.login', path: '/login', component: LoginForm, meta: { auth: false }},
+    {name: 'auth.register', path: '/register', component: RegistrationForm, meta: { auth: false }},
     {name: 'editor', path: '/editor/:presentationId', component: Editor, meta: showLoading},
-    {name: 'presenter', path: '/presenter/:presentationId', component: Presenter, meta: {...showLoading, hideTopBar: true}},
-    {name: 'dashboard', path: '/dashboard', component: Dashboard, meta: showLoading},
+    {name: 'presenter', path: '/presenter/:presentationId', component: Presenter, meta: { showLoading, auth: true, hideTopBar: true}},
+    {name: 'dashboard', path: '/dashboard', component: Dashboard, meta: { showLoading, auth: true }},
     {name: 'page-not-found', path: '*', component: PageNotFound}
   ],
   scrollBehavior (to, from, savedPosition) {
