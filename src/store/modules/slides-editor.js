@@ -273,7 +273,6 @@ const mutations = {
       return null
     }
     const newTextElement = JSON.parse(DEFAULT_NEW_TEXT)
-    // TODO: changeme once using database - database should be in charge of object's id! (at least when saving)
     const newElementId = Math.max(...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
@@ -289,7 +288,6 @@ const mutations = {
     newImageElement.properties.href = url
     newImageElement.properties.width = width
     newImageElement.properties.height = height
-    // TODO: changeme once using database - database should be in charge of object's id! (at least when saving)
     const newElementId = Math.max(...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
     newImageElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
