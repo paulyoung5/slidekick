@@ -2,13 +2,10 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import dashboard from './modules/dashboard'
-<<<<<<< HEAD
 import editor from './modules/slides-editor'
 import presenter from './modules/presenter'
-=======
 import slidesEditor from './modules/slides-editor'
 import user from './modules/user'
->>>>>>> Integrate Login & Register
 
 Vue.use(Vuex)
 
@@ -30,13 +27,10 @@ export default new Vuex.Store({
       state.pageLoading = pageLoading
     }
   },
-<<<<<<< HEAD
   modules: {
     dashboard: dashboard,
     editor: editor,
-    presenter: presenter
+    presenter: presenter,
+    user: user,
   }
-=======
-  modules: {dashboard, slidesEditor, user}
->>>>>>> Integrate Login & Register
 })
