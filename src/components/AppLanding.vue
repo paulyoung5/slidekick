@@ -22,7 +22,10 @@
 export default {
   name: 'AppLanding',
   created () {
-    // if (this.$auth.ready()) this.$router.go({ name: 'dashboard' })
+    if (this.$auth.ready() && this.$auth.check()) {
+      console.log('redirecting')
+      this.$router.push('/dashboard')
+    }
   }
 }
 </script>

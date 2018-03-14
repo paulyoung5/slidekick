@@ -24,7 +24,7 @@ axiosInstance.interceptors.response.use((res) => {
       redirect: {name: 'landing'}
     })
   } else if (res.status === 500) {
-    Vue.router.push({name: 'error-500'})
+    Vue.router.push({name: 'landing'})
   } else if (res.status === 404) {
     // TODO: add 404 component
     Vue.auth.logout()

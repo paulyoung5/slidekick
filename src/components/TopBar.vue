@@ -211,7 +211,6 @@ export default {
   computed: {
     ...mapGetters(['pageLoading']),
     ...mapGetters('editor', ['title', 'presentationId']),
-
     presentationTitle: {
       get () {
         return this.title
@@ -220,7 +219,6 @@ export default {
         this.updateTitle(value)
       }
     },
-
     hideTopBar () {
       return this.$route.meta.hideTopBar
     },
@@ -235,13 +233,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions('editor', ['updateTitle']),
     logout () {
       this.$auth.logout()
       this.$router.push({ name: 'landing' })
     }
-  },
-  methods: {
-    ...mapActions('editor', ['updateTitle'])
   }
 }
 </script>
