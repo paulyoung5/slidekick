@@ -153,17 +153,17 @@
 <template>
   <div class="current-slide">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" preserveAspectRatio="xMinYMax meet" :style="slideProperties">
-      <text-element
-        v-for="textElement in textElements"
-        :key="textElement.id"
-        :element="textElement"
-      ></text-element>
-
       <image-element
-        v-for="imageElement in imageElements"
+        v-for="imageElement in imageElements.reverse()"
         :key="imageElement.id"
         :element="imageElement"
       ></image-element>
+      
+      <text-element
+        v-for="textElement in textElements.reverse()"
+        :key="textElement.id"
+        :element="textElement"
+      ></text-element>
     </svg>
   </div>
 </template>

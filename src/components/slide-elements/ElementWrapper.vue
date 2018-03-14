@@ -46,11 +46,16 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
+import elementHelpers from './helpers'
+import InspectingUserLabel from './InspectingUserLabel'
 
 export default {
   name: 'element-wrapper',
   props: {
     element: Object
+  },
+  components: {
+    'inspecting-user-label': InspectingUserLabel
   },
   data () {
     return {
@@ -81,44 +86,30 @@ export default {
   watch: {
     element: {
       handler: function () {
-        return this.updateBBox()
+        return this.updateBBox(this.actualEl)
       },
       deep: true
     },
     currentElement: {
       handler: function () {
-        return this.updateBBox()
+        return this.updateBBox(this.actualEl)
       },
       deep: true
     },
     currentSlide: {
       handler: function () {
-        return this.updateBBox()
+        return this.updateBBox(this.actualEl)
       },
       deep: true
     }
   },
   methods: {
     ...mapActions('editor', ['inspectElement', 'currentElement', 'currentSlide', 'updateCoordinates']),
-    updateBBox () {
-      return this.$nextTick(() => {
-        try {
-          this.bbox = this.actualEl.getBBox()
-        } catch (_) {
-          // Workaround for FF bug #612118 (https://bugzilla.mozilla.org/show_bug.cgi?id=612118)
-          // getBBox() will throw an exception if the element
-          // is not attached and rendered, but there is no reliable way to check for this
-          setTimeout(() => {
-            // Try again in 3 seconds
-            this.updateBBox()
-          }, 3000)
-        }
-      })
-    }
+    ...elementHelpers
   },
   mounted () {
     this.actualEl = this.$slots['actual-element'][0].elm
-    this.updateBBox()
+    this.updateBBox(this.actualEl)
   }
 }
 </script>

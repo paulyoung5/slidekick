@@ -42,7 +42,7 @@
     </li>
 
     <li>
-      <a href="#">
+      <a href="#" @click="createImage">
         <i class="material-icons">photo</i>
       </a>
     </li>
@@ -54,7 +54,7 @@ import {mapActions} from 'vuex'
 export default {
   name: 'toolbox',
   methods: {
-    ...mapActions('editor', ['createText'])
+    ...mapActions('editor', ['createText', 'createImage'])
   }
 }
 </script>

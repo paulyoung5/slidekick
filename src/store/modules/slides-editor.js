@@ -53,6 +53,16 @@ const DEFAULT_NEW_TEXT = JSON.stringify({
     content: 'New text box'
   }
 })
+const DEFAULT_NEW_IMAGE = JSON.stringify({
+  type: 'IMAGE',
+  properties: {
+    x: '265px',
+    y: '45px',
+    width: '150px',
+    height: '150px',
+    href: 'https://picsum.photos/150'
+  }
+})
 
 const getters = {
   presentation: state => state.presentation,
@@ -118,12 +128,25 @@ const actions = {
   },
 
   moveSlide ({commit}, {draggingSlideIndex, replaceSlideIndex}) {
-    console.log(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
+    console.info(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
     commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
   },
 
   createText ({commit}) {
     commit('createText')
+  },
+
+  createImage ({commit}) {
+    const url = window.prompt('Please enter the URL of new image')
+    const height = window.prompt('Please enter the height (in pixels)')
+    const width = window.prompt('Please enter the width (in pixels)')
+
+    if (!url || !height || !width) {
+      window.alert('Please enter a valid image URL, height (pixels) and width (pixels)')
+      return null
+    }
+
+    commit('createImage', {url, height, width})
   },
 
   inspectElement ({commit}, selectedElementIndex) {
@@ -254,6 +277,22 @@ const mutations = {
     const newElementId = Math.max(...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
+    state.selectedElementIndex = newElementId
+  },
+
+  createImage (state, {url, height, width}) {
+    if (!state.presentation || !state.presentation.slides[state.selectedSlideIndex]) {
+      console.error('Unable to create new image element: no active presentation and/or slide')
+      return null
+    }
+    const newImageElement = JSON.parse(DEFAULT_NEW_IMAGE)
+    newImageElement.properties.href = url
+    newImageElement.properties.width = width
+    newImageElement.properties.height = height
+    // TODO: changeme once using database - database should be in charge of object's id! (at least when saving)
+    const newElementId = Math.max(...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
+    newImageElement.id = newElementId
+    state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
     state.selectedElementIndex = newElementId
   },
 
