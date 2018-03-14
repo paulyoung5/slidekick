@@ -153,6 +153,13 @@ const actions = {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
 
+  deleteElement ({commit}, selectedElementIndex) {
+    const confirm = window.confirm('Are you sure you want to delete this?')
+    if (confirm) {
+      commit('deleteElement', selectedElementIndex)
+    }
+  },
+
   updateBackgroundColour ({commit}, value) {
     commit('setBackgroundColour', value)
   },
@@ -292,6 +299,18 @@ const mutations = {
     newImageElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
     state.selectedElementIndex = newElementId
+  },
+
+  deleteElement (state, selectedElementIndex) {
+    if (!state.presentation.slides.length ||
+      !state.presentation.slides[state.selectedSlideIndex].elements.length ||
+      !state.presentation.slides[state.selectedSlideIndex].elements.find(el => el.id === selectedElementIndex)
+    ) {
+      console.error('Unable to delete element')
+    }
+
+    const slide = state.presentation.slides[state.selectedSlideIndex]
+    slide.elements = slide.elements.filter(el => el.id !== selectedElementIndex)
   },
 
   setBackgroundColour (state, newBackgroundColour) {

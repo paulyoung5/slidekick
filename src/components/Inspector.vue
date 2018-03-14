@@ -183,6 +183,8 @@
         <input type="number" step="5" min="10" max="200" v-model="fontSize">
       </div>
     </div>
+
+    <a href="#" v-if="currentElement" @click="deleteElement(currentElement.id)">Delete element</a>
   </div>
 </template>
 
@@ -281,7 +283,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize', 'updateFill', 'updateContent']),
+    ...mapActions('editor', ['updateBackgroundColour', 'updateX', 'updateY', 'updateFontFamily', 'updateFontSize', 'updateFill', 'updateContent', 'deleteElement']),
     toggleSection (e) {
       let sectionEl = e.currentTarget.parentElement.parentElement
       sectionEl.classList.toggle('hidden')
