@@ -11,8 +11,8 @@ export default {
   fetchData: { url: 'user/me', method: 'GET', enabled: true },
   registerData: { url: 'user/register', method: 'POST', fetchUser: true, redirect: '/login' },
   refreshData: { url: 'user/refresh', method: 'POST', enabled: true, interval: 2 },
-  authRedirect: { path: '/' },
-  forbiddenRedirect: { path: '/dashboard' },
+  authRedirect: { name: 'landing' },
+  forbiddenRedirect: { name: '/dashboard' },
   parseUserData (req) {
     let u = null
     if (req.user) u = req.user
