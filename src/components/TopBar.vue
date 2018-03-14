@@ -196,6 +196,9 @@
         <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode">
           <i class="material-icons">play_circle_outline</i> Present
         </router-link>
+        <a href="#" @click.prevent="logout" v-if="$auth.check()">
+          <i class="material-icons">exit_to_app</i> Log-Out
+        </a>
       </div>
     </div>
 </template>
@@ -208,7 +211,6 @@ export default {
   computed: {
     ...mapGetters(['pageLoading']),
     ...mapGetters('editor', ['title', 'presentationId']),
-
     presentationTitle: {
       get () {
         return this.title
@@ -217,7 +219,6 @@ export default {
         this.updateTitle(value)
       }
     },
-
     hideTopBar () {
       return this.$route.meta.hideTopBar
     },
@@ -228,11 +229,15 @@ export default {
       return this.$route.name === 'editor'
     },
     user () {
-      return false
+      return this.$auth.user()
     }
   },
   methods: {
-    ...mapActions('editor', ['updateTitle'])
+    ...mapActions('editor', ['updateTitle']),
+    logout () {
+      this.$auth.logout()
+      this.$router.push({ name: 'landing' })
+    }
   }
 }
 </script>
