@@ -1,12 +1,12 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import axios from 'axios'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
 
 import App from './App'
+import api from './api'
 import auth from './auth'
 import router from './router'
 import store from './store'
@@ -14,25 +14,7 @@ import store from './store'
 Vue.config.productionTip = false
 Vue.router = router
 
-const axiosInstance = axios.create({ baseURL: '/api' })
-
-axiosInstance.interceptors.response.use((res) => {
-  // Unauthorized Access
-  if (res.status === 401 &&
-    ['UnauthorizedAccess', 'InvalidToken'].indexOf(res.data.code) > -1) {
-    Vue.auth.logout({
-      redirect: {name: 'landing'}
-    })
-  } else if (res.status === 500) {
-    Vue.router.push({name: 'landing'})
-  } else if (res.status === 404) {
-    // TODO: add 404 component
-    Vue.auth.logout()
-  }
-  return res
-})
-
-Vue.use(VueAxios, axiosInstance)
+Vue.use(VueAxios, api)
 Vue.use(VueRouter)
 Vue.use(VueAuth, auth)
 

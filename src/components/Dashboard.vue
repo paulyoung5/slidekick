@@ -185,9 +185,7 @@ export default {
     ...mapGetters('dashboard', ['presentations'])
   },
   created () {
-    console.log('created')
-    const dummyUserId = 0
-    this.$store.dispatch('dashboard/fetchPresentations', dummyUserId)
+    this.$store.dispatch('dashboard/fetchPresentations', this.$auth.user().id)
   }
 }
 </script>
