@@ -7,8 +7,12 @@
     <h1>Log in</h1>
 
     <div v-if="error" class="error">
-      {{ error }}
+      <i class="material-icons">error</i>
+      <span>
+        {{ error }}
+      </span>
     </div>
+
     <label>
       <input type="email" name="email" v-model="email" placeholder="Email" required="required">
       <span>Email</span>
@@ -51,9 +55,16 @@ export default {
       }}).then(res => {
         this.setPageLoading(true)
         this.$store.commit(AUTHENTICATE_USER, res)
+      }).catch(err => {
+        switch (err.response.status) {
+          case 401:
+          case 403:
+            this.error = `Sorry, those details weren't recognised`
+            break
+          default:
+            this.error = 'Sorry, something went wrong. Please check your internet connection and try again'
+        }
       })
-      // eslint-disable-next-line
-      .catch(err => this.error = err.message)
     },
     validate () {
       if (this.email.length === 0) {

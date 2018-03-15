@@ -56,13 +56,13 @@
       <li>
         <router-link :to="{ name: 'auth.login' }">
           <i class="material-icons">lock</i>
-          Log In
+          <span>Log In</span>
         </router-link>
       </li>
       <li>
         <router-link :to="{ name: 'auth.register' }">
           <i class="material-icons">create</i>
-          Register
+          <span>Register</span>
         </router-link>
       </li>
     </ul>
