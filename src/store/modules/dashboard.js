@@ -2,7 +2,7 @@ import Vue from 'vue'
 import api from '../../api/presentation'
 
 const state = {
-  presentations: {}
+  presentations: []
 }
 
 const getters = {
@@ -19,6 +19,15 @@ const actions = {
     } catch (error) {
       console.error(error)
     }
+  },
+  createNewPresentation ({commit}, userId) {
+    const title = window.prompt('Please enter a name for your presentation')
+    if (!title) {
+      window.alert('You did not enter a name')
+      return
+    }
+
+    commit('createPresentation', {title, userId})
   }
 }
 
@@ -27,6 +36,15 @@ const mutations = {
     for (let i = 0; i < presentations.length; i += 1) {
       Vue.set(state.presentations, presentations[i].id, presentations[i])
     }
+  },
+  createPresentation (state, {userId, title}) {
+    const newPresId = Math.max(0, ...state.presentations.map(p => p.id)) + 1
+    state.presentations.push({
+      id: newPresId,
+      userId,
+      title,
+      slides: []
+    })
   }
 }
 
