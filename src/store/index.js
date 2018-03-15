@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import dashboard from './modules/dashboard'
 import editor from './modules/slides-editor'
 import presenter from './modules/presenter'
+import user from './modules/user'
 
 Vue.use(Vuex)
 
@@ -28,6 +29,7 @@ export default new Vuex.Store({
   modules: {
     dashboard: dashboard,
     editor: editor,
-    presenter: presenter
+    presenter: presenter,
+    user: user
   }
 })
