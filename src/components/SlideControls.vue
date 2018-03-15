@@ -134,16 +134,8 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'slide-controls',
-  data () {
-    return {
-      users: [
-        {name: 'Paul'},
-        {name: 'Dan'}
-      ]
-    }
-  },
   computed: {
-    ...mapGetters('editor', ['zoomLevel'])
+    ...mapGetters('editor', ['zoomLevel', 'activeUsers'])
   },
   methods: {
     ...mapActions('editor', ['zoomIn', 'zoomOut'])
