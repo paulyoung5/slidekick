@@ -1,3 +1,18 @@
+import axios from '@/api'
+
+console.log(axios)
+
+export const getPresentation = (id, success, failure) =>
+  axios.get(`/presentations/${id}`).then(success).catch(failure)
+
+export const savePresentation = (presentation, success, failure) => {
+  if (presentation.id) {
+    return axios.post(`/presentations/${presentation.id}`, presentation)
+      .then(success).catch(failure)
+  }
+  return axios.post('/presentations/new', presentation).then(success).catch(failure)
+}
+
 const presentations = [
   {
     id: 22,
@@ -72,18 +87,11 @@ export default {
       const result = presentations.find(p => p.id === parseInt(pId))
 
       return setTimeout(() => {
-        resolve(result || null)
+        Promise.resolve(result || null)
       }, 2000)
     })
   },
   getPresentationsForUser (userId) {
-    // Dummy promisified return to simulate fetching from DB
-    return new Promise((resolve, reject) => {
-      const result = presentations.filter(p => p.userId === parseInt(userId))
-
-      return setTimeout(() => {
-        resolve(result || null)
-      }, 2000)
-    })
+    return axios.get('/presentations')
   }
 }

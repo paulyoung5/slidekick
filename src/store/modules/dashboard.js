@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import api from '../../api/presentation'
 
 const state = {
@@ -12,9 +13,9 @@ const actions = {
   async fetchPresentations ({commit}, userId) {
     try {
       // At this point, get the presentation data from mongodb! we can then update the state
-      const presentations = await api.getPresentationsForUser(userId)
+      const res = await api.getPresentationsForUser(userId)
 
-      commit('setPresentations', presentations)
+      commit('setPresentations', res.data.presentations)
       commit('setPageLoading', false, { root: true })
     } catch (error) {
       console.error(error)
@@ -24,7 +25,9 @@ const actions = {
 
 const mutations = {
   setPresentations (state, presentations) {
-    state.presentations = presentations
+    for (let i = 0; i < presentations.length; i += 1) {
+      Vue.set(state.presentations, presentations[i].id, presentations[i])
+    }
   }
 }
 
