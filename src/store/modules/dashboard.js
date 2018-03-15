@@ -2,7 +2,7 @@ import Vue from 'vue'
 import api from '../../api/presentation'
 
 const state = {
-  presentations: []
+  presentations: {}
 }
 
 const getters = {
@@ -14,7 +14,6 @@ const actions = {
     try {
       // At this point, get the presentation data from mongodb! we can then update the state
       const res = await api.getPresentationsForUser(userId)
-
       commit('setPresentations', res.data.presentations)
       commit('setPageLoading', false, { root: true })
     } catch (error) {
