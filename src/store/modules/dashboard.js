@@ -28,6 +28,19 @@ const actions = {
     }
 
     commit('createPresentation', {title, userId})
+  },
+  deletePresentation ({commit}, presentationId) {
+    const confirm = window.confirm('Are you sure you want to delete this presentation?')
+    if (confirm) {
+      commit('deletePresentation', presentationId)
+    }
+  },
+  renamePresentation ({commit}, presentationId) {
+    const newTitle = window.prompt('Please enter the new title')
+    if (!newTitle) {
+      window.alert(`The entered title wasn't valid. Please try again.`)
+    }
+    commit('setPresentationName', {presentationId, newTitle})
   }
 }
 
@@ -45,6 +58,13 @@ const mutations = {
       title,
       slides: []
     })
+  },
+  deletePresentation (state, presentationId) {
+    state.presentations = state.presentations.filter(p => p.id !== presentationId)
+  },
+  setPresentationName (state, {presentationId, newTitle}) {
+    const presentation = state.presentations.filter(p => p.id === presentationId)[0]
+    presentation.title = newTitle
   }
 }
 

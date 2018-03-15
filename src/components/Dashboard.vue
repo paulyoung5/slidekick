@@ -45,7 +45,7 @@
     cursor: pointer;
     transition: 0.3s all ease-out;
 
-    overflow: hidden;
+    overflow: visible;
     min-height: 0;
     min-width: 0;
 
@@ -111,6 +111,10 @@
     min-width: 0;
   }
 
+  .pres-info {
+    overflow: visible;
+  }
+
   .pres-info .title {
     grid-area: title;
     font-weight: bold;
@@ -129,6 +133,58 @@
 
   .pres-info .manage {
     grid-area: manage;
+    border-radius: 5px 5px 0 0;
+    height: 2.5em;
+    width: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible;
+  }
+
+  .pres-info .manage ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200px;
+    border-radius: 0 5px 5px 5px;
+    color: white;
+    visibility: hidden;
+    opacity: 0;
+
+    display: grid;
+  }
+
+  .pres-info .manage ul li a {
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    padding: 0.7em 0.9em;
+  }
+  .pres-info .manage ul li a i {
+    font-size: 1.4em;
+  }
+  .pres-info .manage ul li a:hover {
+    background-color: var(--primary-colour);
+    transition: 0.4s all;
+  }
+
+  .pres-info .manage:hover {
+    color: white;
+  }
+
+  .pres-info .manage:hover,
+  .pres-info .manage ul {
+    background-color: rgba(0, 0, 0, 0.6);
+    transition: 0.4s all;
+  }
+
+  .pres-info .manage:hover ul {
+    visibility: visible;
+    opacity: 1;
+    transition: 0.4s all;
   }
 
   @media
@@ -167,8 +223,22 @@
           <span class="title">{{ presentation.title }}</span>
           <span class="last-opened">Edited <span class="date">Thu 15 Feb</span> by <span class="edited-by">Paul</span></span>
           
-          <a href="#" class="manage">
+          <a href="#" class="manage" @click.prevent>
             <i class="material-icons">more_vert</i>
+            <ul>
+              <li>
+                <a href="#" @click="renamePresentation(presentation.id)">
+                  <i class="material-icons">edit</i>
+                  <span>Rename presentation</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" @click="deletePresentation(presentation.id)">
+                  <i class="material-icons">delete</i>
+                  <span>Delete presentation</span>
+                </a>
+              </li>
+            </ul>
           </a>
         </span>
       </router-link>
@@ -185,7 +255,7 @@ export default {
     ...mapGetters('dashboard', ['presentations'])
   },
   methods: {
-    ...mapActions('dashboard', ['fetchPresentations', 'createNewPresentation']),
+    ...mapActions('dashboard', ['fetchPresentations', 'createNewPresentation', 'renamePresentation', 'deletePresentation']),
     createNew () {
       return this.createNewPresentation(this.$auth.user().id)
     }
