@@ -1,0 +1,74 @@
+form {
+  overflow: auto !important;
+  padding: 4em 2em;
+
+  display: grid;
+  grid-gap: 2em;
+  grid-template-columns: minmax(auto, 500px);
+  align-items: start;
+  align-content: start;
+  justify-content: center;
+}
+
+form label {
+  display: grid;
+  grid-gap: 1em;
+  grid-auto-flow: row-reverse;
+}
+
+form label span {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(0, 0, 0, 0.6);
+  order: 0;
+}
+
+form label input,
+form label input:valid {
+  order: 1;
+  border: 0;
+  padding: 1em;
+  font-size: 1.3em;
+  border: 0;
+  outline: 4px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0;
+  width: 100%;
+}
+
+form label input:focus,
+form label input:focus:invalid {
+  outline-color: var(--primary-colour);
+}
+
+form label input:focus + span,
+form label input:focus:invalid + span {
+  color: var(--primary-colour);
+  transition: 0.4s all;
+}
+
+form.submitted label input:invalid {
+  outline-color: red;
+}
+form.submitted label input:invalid + span {
+  color: red;
+}
+
+form a {
+  background-color: var(--primary-colour);
+  color: white;
+  font-weight: bold;
+  padding: 0.7em 1.5em;
+  border-radius: 100px;
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  justify-self: start;
+  font-size: 1.2em;
+}
+
+form a:hover {
+  background-color: var(--primary-colour-hover);
+  transition: 0.4s all;
+}
