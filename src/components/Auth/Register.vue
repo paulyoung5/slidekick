@@ -5,9 +5,14 @@
 <template>
   <form>
     <h1>Sign up</h1>
+    
     <div v-if="error" class="error">
-      {{ error }}
+      <i class="material-icons">error</i>
+      <span>
+        {{ error }}
+      </span>
     </div>
+
     <label>
       <input type="text" name="first_name" v-model="forename" placeholder="First name" required="required">
       <span>First name</span>
@@ -52,7 +57,7 @@ export default {
   },
   methods: {
     register () {
-      if (!this.$el.checkValidity() || !this.validate()) {
+      if (!this.validate() || !this.$el.checkValidity()) {
         this.$el.classList.add('submitted')
         return
       }
@@ -63,9 +68,7 @@ export default {
         email: this.email,
         password: this.password
       }})
-        .then(res => {
-          this.$store.commit(AUTHENTICATE_USER, res)
-        })
+        .then(res => this.$store.commit(AUTHENTICATE_USER, res))
         // eslint-disable-next-line
         .catch(err => this.error = err.message)
     },
