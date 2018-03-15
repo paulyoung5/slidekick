@@ -8,16 +8,19 @@
   
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: repeat(3, 52px);
+  grid-template-columns: repeat(2, 1fr);
   justify-items: center;
   justify-content: center;
 }
 
 .toolbox li a {
   padding: 0.7em;
-  display: flex;
+
+  display: grid;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  grid-gap: 1em;
+  grid-template-columns: auto 1fr;
   border-radius: 5px;
 }
 
@@ -38,12 +41,14 @@
     <li>
       <a href="#" @click="createText">
         <i class="material-icons">text_fields</i>
+        <span>New text</span>
       </a>
     </li>
 
     <li>
-      <a href="#">
+      <a href="#" @click="createImage">
         <i class="material-icons">photo</i>
+        <span>New image</span>
       </a>
     </li>
   </ul>
@@ -54,7 +59,7 @@ import {mapActions} from 'vuex'
 export default {
   name: 'toolbox',
   methods: {
-    ...mapActions('editor', ['createText'])
+    ...mapActions('editor', ['createText', 'createImage'])
   }
 }
 </script>

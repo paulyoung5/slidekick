@@ -4,6 +4,7 @@ const state = {
   selectedSlideIndex: 0,
   zoomLevel: 1,
   selectedElementIndex: -1,
+  activeUsers: [],
 
   presentation: {
     id: -1,
@@ -53,6 +54,16 @@ const DEFAULT_NEW_TEXT = JSON.stringify({
     content: 'New text box'
   }
 })
+const DEFAULT_NEW_IMAGE = JSON.stringify({
+  type: 'IMAGE',
+  properties: {
+    x: '265px',
+    y: '45px',
+    width: '150px',
+    height: '150px',
+    href: 'https://picsum.photos/150'
+  }
+})
 
 const getters = {
   presentation: state => state.presentation,
@@ -75,7 +86,8 @@ const getters = {
     return state.presentation.slides[state.selectedSlideIndex].elements.find(el => el.id === state.selectedElementIndex)
   },
   slides: state => state.presentation.slides,
-  zoomLevel: state => state.zoomLevel
+  zoomLevel: state => state.zoomLevel,
+  activeUsers: state => state.activeUsers
 }
 
 const actions = {
@@ -118,7 +130,7 @@ const actions = {
   },
 
   moveSlide ({commit}, {draggingSlideIndex, replaceSlideIndex}) {
-    console.log(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
+    console.info(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
     commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
   },
 
@@ -126,8 +138,28 @@ const actions = {
     commit('createText')
   },
 
+  createImage ({commit}) {
+    const url = window.prompt('Please enter the URL of new image')
+    const height = window.prompt('Please enter the height (in pixels)')
+    const width = window.prompt('Please enter the width (in pixels)')
+
+    if (!url || !height || !width) {
+      window.alert('Please enter a valid image URL, height (pixels) and width (pixels)')
+      return null
+    }
+
+    commit('createImage', {url, height, width})
+  },
+
   inspectElement ({commit}, selectedElementIndex) {
     commit('setSelectedElementIndex', selectedElementIndex)
+  },
+
+  deleteElement ({commit}, selectedElementIndex) {
+    const confirm = window.confirm('Are you sure you want to delete this?')
+    if (confirm) {
+      commit('deleteElement', selectedElementIndex)
+    }
   },
 
   updateBackgroundColour ({commit}, value) {
@@ -250,11 +282,37 @@ const mutations = {
       return null
     }
     const newTextElement = JSON.parse(DEFAULT_NEW_TEXT)
-    // TODO: changeme once using database - database should be in charge of object's id! (at least when saving)
-    const newElementId = Math.max(...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
+    const newElementId = Math.max(0, ...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId
+  },
+
+  createImage (state, {url, height, width}) {
+    if (!state.presentation || !state.presentation.slides[state.selectedSlideIndex]) {
+      console.error('Unable to create new image element: no active presentation and/or slide')
+      return null
+    }
+    const newImageElement = JSON.parse(DEFAULT_NEW_IMAGE)
+    newImageElement.properties.href = url
+    newImageElement.properties.width = width
+    newImageElement.properties.height = height
+    const newElementId = Math.max(0, ...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
+    newImageElement.id = newElementId
+    state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
+    state.selectedElementIndex = newElementId
+  },
+
+  deleteElement (state, selectedElementIndex) {
+    if (!state.presentation.slides.length ||
+      !state.presentation.slides[state.selectedSlideIndex].elements.length ||
+      !state.presentation.slides[state.selectedSlideIndex].elements.find(el => el.id === selectedElementIndex)
+    ) {
+      console.error('Unable to delete element')
+    }
+
+    const slide = state.presentation.slides[state.selectedSlideIndex]
+    slide.elements = slide.elements.filter(el => el.id !== selectedElementIndex)
   },
 
   setBackgroundColour (state, newBackgroundColour) {
