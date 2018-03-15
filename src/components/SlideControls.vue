@@ -121,7 +121,7 @@
     </ul>
 
     <ul class="users">
-      <li v-for="user in users">
+      <li v-for="user in activeUsers">
         {{ user.name | initial }}
         <span>{{ user.name }} is editing</span>
       </li>
