@@ -4,6 +4,7 @@ const state = {
   selectedSlideIndex: 0,
   zoomLevel: 1,
   selectedElementIndex: -1,
+  activeUsers: [],
 
   presentation: {
     id: -1,
@@ -85,7 +86,8 @@ const getters = {
     return state.presentation.slides[state.selectedSlideIndex].elements.find(el => el.id === state.selectedElementIndex)
   },
   slides: state => state.presentation.slides,
-  zoomLevel: state => state.zoomLevel
+  zoomLevel: state => state.zoomLevel,
+  activeUsers: state => state.activeUsers
 }
 
 const actions = {
