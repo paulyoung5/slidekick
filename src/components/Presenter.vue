@@ -75,6 +75,10 @@
   .presenter-toolbar .right {
     justify-self: end;
     padding-right: 1em;
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: 1fr 1fr;
+    justify-items: end;
   }
   .presenter-toolbar .right a {
     grid-template-columns: auto 1fr;
@@ -137,13 +141,18 @@
         </a>
       </div>
 
-      <div class="right" v-show="supportsFullscreen">
-        <a href="#" @click="enterFullscreen" v-if="!fullscreen">
+      <div class="right">
+        <router-link :to="{ name: 'editor', params: { presentationId: presentation.id }}">
+          <i class="material-icons">keyboard_arrow_left</i> Back to Editor
+        </router-link>
+        
+        <a href="#" @click="enterFullscreen" v-if="supportsFullscreen && !fullscreen">
           <i class="material-icons">fullscreen</i> Fullscreen
         </a>
-        <a href="#" @click="exitFullscreen" v-else>
+        <a href="#" @click="exitFullscreen" v-if="supportsFullscreen && fullscreen">
           <i class="material-icons">fullscreen_exit</i> Exit Fullscreen
         </a>
+
       </div>
     </div>
     <current-slide :slides="slides" :selected-slide-index="selectedSlideIndex"></current-slide>
