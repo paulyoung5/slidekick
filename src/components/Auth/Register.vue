@@ -1,25 +1,38 @@
+<style>
+@import './../../assets/landing.css';
+</style>
+
 <template>
-  <div>
+  <form>
+    <h1>Sign up</h1>
     <div v-if="error" class="error">
       {{ error }}
     </div>
-    <label>First Name (*):
-      <input type="text" name="first_name" v-model="forename">
+    <label>
+      <input type="text" name="first_name" v-model="forename" placeholder="First name" required="required">
+      <span>First name</span>
     </label>
-    <label>Surname (*):
-      <input type="text" name="surname" v-model="surname">
+    <label>
+      <input type="text" name="surname" v-model="surname" placeholder="Surname" required="required">
+      <span>Surname</span>
     </label>
-    <label>Email (*):
-      <input type="email" name="email" v-model="email">
+    <label>
+      <input type="email" name="email" v-model="email" placeholder="Email" required="required">
+      <span>Email</span>
     </label>
-    <label>Password (*):
-      <input type="password" name="password" v-model="password">
+    <label>
+      <input type="password" name="password" v-model="password" placeholder="Password" required="required">
+      <span>Password</span>
     </label>
-    <label>Password Confirmation (*):
-      <input type="password" name="password_confirm" v-model="password_confirm">
+    <label>
+      <input type="password" name="password_confirm" v-model="password_confirm" placeholder="Confirm password" required="required">
+      <span>Confirm Password</span>
     </label>
-    <a href="#" @click.prevent="register">Register</a>
-  </div>
+    <a href="#" @click.prevent="register">
+      <span>Register</span>
+      <i class="material-icons">lock</i>
+    </a>
+  </form>
 </template>
 
 <script>
@@ -39,7 +52,10 @@ export default {
   },
   methods: {
     register () {
-      if (!this.validate()) return
+      if (!this.$el.checkValidity() || !this.validate()) {
+        this.$el.classList.add('submitted')
+        return
+      }
 
       this.$auth.register({ data: {
         forename: this.forename,
