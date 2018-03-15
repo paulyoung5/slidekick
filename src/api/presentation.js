@@ -68,7 +68,7 @@ const presentations = [
 function httpGet (theUrl) {
   var xmlHttp = new XMLHttpRequest()
   xmlHttp.open('GET', theUrl, false)
-  xmlHttp.setRequestHeader('auth', token)
+  // xmlHttp.setRequestHeader('auth', token)
   xmlHttp.send(null)
   console.log(xmlHttp.responseText)
   return xmlHttp.responseText
