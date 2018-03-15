@@ -223,7 +223,7 @@ export default {
       return this.$route.meta.hideTopBar
     },
     displayBack () {
-      return this.$route.name !== 'dashboard'
+      return this.$route.name !== 'dashboard' && this.$route.name !== 'landing'
     },
     editorMode () {
       return this.$route.name === 'editor'
