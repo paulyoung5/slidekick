@@ -154,7 +154,7 @@
 
     <div class="my-presentations">
 
-      <a href="#" class="create">
+      <a href="#" class="create" @click.prevent="createNew">
         <i class="material-icons">add</i>
       </a>
       
@@ -177,15 +177,21 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
   name: 'dashboard',
   computed: {
     ...mapGetters('dashboard', ['presentations'])
   },
+  methods: {
+    ...mapActions('dashboard', ['fetchPresentations', 'createNewPresentation']),
+    createNew () {
+      return this.createNewPresentation(this.$auth.user().id)
+    }
+  },
   created () {
-    this.$store.dispatch('dashboard/fetchPresentations', this.$auth.user().id)
+    this.fetchPresentations(this.$auth.user().id)
   }
 }
 </script>
