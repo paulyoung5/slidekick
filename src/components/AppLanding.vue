@@ -45,7 +45,7 @@
   color: rgba(0, 0, 0, 0.4);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 400px) {
   .landing-container ul {
     grid-template-columns: 1fr;
   }
