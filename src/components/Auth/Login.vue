@@ -18,7 +18,7 @@
       <span>Email</span>
     </label>
     <label>
-      <input type="password" name="password" v-model="password" placeholder="Password" required="required">
+      <input type="password" name="password" v-model="password" placeholder="Password" required="required" @keyup.enter.prevent="login">
       <span>Password</span>
     </label>
     <a href="#" @click.prevent="login">
