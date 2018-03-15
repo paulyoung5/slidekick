@@ -5,7 +5,7 @@
 <template>
   <form>
     <h1>Sign up</h1>
-    
+
     <div v-if="error" class="error">
       <i class="material-icons">error</i>
       <span>
@@ -30,7 +30,7 @@
       <span>Password</span>
     </label>
     <label>
-      <input type="password" name="password_confirm" v-model="password_confirm" placeholder="Confirm password" required="required">
+      <input type="password" name="password_confirm" v-model="password_confirm" placeholder="Confirm password" required="required" @keyup.enter.prevent="register">
       <span>Confirm Password</span>
     </label>
     <a href="#" @click.prevent="register">

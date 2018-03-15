@@ -243,7 +243,7 @@ export default {
       this.$router.push({name: 'landing'})
       setTimeout(() => {
         this.setPageLoading(false)
-      }, 1000)
+      }, 500)
     }
   }
 }
