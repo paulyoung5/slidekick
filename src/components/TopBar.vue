@@ -135,7 +135,7 @@
   align-items: center;
 }
 .secondary-actions a i {
-  font-size: 1em;
+  font-size: 1.2em;
 }
 
 .secondary-actions a:hover {
@@ -194,10 +194,12 @@
 
       <div class="secondary-actions">
         <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode">
-          <i class="material-icons">play_circle_outline</i> Present
+          <i class="material-icons">play_circle_outline</i>
+          <span>Present</span>
         </router-link>
         <a href="#" @click.prevent="logout" v-if="$auth.check()">
-          <i class="material-icons">exit_to_app</i> Log-Out
+          <i class="material-icons">exit_to_app</i>
+          <span>Log out</span>
         </a>
       </div>
     </div>
@@ -233,10 +235,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setPageLoading']),
     ...mapActions('editor', ['updateTitle']),
     logout () {
       this.$auth.logout()
-      this.$router.push({ name: 'landing' })
+      this.setPageLoading(true)
+      this.$router.push({name: 'landing'})
+      setTimeout(() => {
+        this.setPageLoading(false)
+      }, 500)
     }
   }
 }

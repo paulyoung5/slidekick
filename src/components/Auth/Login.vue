@@ -1,16 +1,31 @@
+<style>
+@import './../../assets/landing.css';
+</style>
+
 <template>
-  <div>
+  <form>
+    <h1>Log in</h1>
+
     <div v-if="error" class="error">
-      {{ error }}
+      <i class="material-icons">error</i>
+      <span>
+        {{ error }}
+      </span>
     </div>
-    <label>Email (*):
-      <input type="email" name="email" v-model="email">
+
+    <label>
+      <input type="email" name="email" v-model="email" placeholder="Email" required="required">
+      <span>Email</span>
     </label>
-    <label>Password (*):
-      <input type="password" name="password" v-model="password">
+    <label>
+      <input type="password" name="password" v-model="password" placeholder="Password" required="required" @keyup.enter.prevent="login">
+      <span>Password</span>
     </label>
-    <a href="#" @click.prevent="login">Log in</a>
-  </div>
+    <a href="#" @click.prevent="login">
+      <span>Log in</span>
+      <i class="material-icons">lock</i>
+    </a>
+  </form>
 </template>
 
 <script>
@@ -26,24 +41,30 @@ export default {
       error: ''
     }
   },
-  created () {
-    this.setPageLoading(false)
-  },
   methods: {
     ...mapActions(['setPageLoading']),
     login () {
-      if (!this.validate()) return
+      if (!this.$el.checkValidity() || !this.validate()) {
+        this.$el.classList.add('submitted')
+        return
+      }
 
       this.$auth.login({ data: {
         email: this.email,
         password: this.password
-      }})
-        .then(res => {
-          this.setPageLoading(true)
-          this.$store.commit(AUTHENTICATE_USER, res)
-        })
-        // eslint-disable-next-line
-        .catch(err => this.error = err.message)
+      }}).then(res => {
+        this.setPageLoading(true)
+        this.$store.commit(AUTHENTICATE_USER, res)
+      }).catch(err => {
+        switch (err.response.status) {
+          case 401:
+          case 403:
+            this.error = `Sorry, those details weren't recognised`
+            break
+          default:
+            this.error = 'Sorry, something went wrong. Please check your internet connection and try again'
+        }
+      })
     },
     validate () {
       if (this.email.length === 0) {
