@@ -249,10 +249,6 @@ export default {
         }
       })
     })
-
-    this.socket.on('request-user', () => {
-
-    })
   }
 }
 </script>
