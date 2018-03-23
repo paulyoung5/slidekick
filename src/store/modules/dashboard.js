@@ -20,14 +20,21 @@ const actions = {
       console.error(error)
     }
   },
-  createNewPresentation ({commit}, userId) {
-    const title = window.prompt('Please enter a name for your presentation')
-    if (!title) {
-      window.alert('You did not enter a name')
-      return
-    }
+  async createNewPresentation ({commit}, userId) {
+    try {
+      const title = window.prompt('Please enter a name for your presentation')
+      if (!title) {
+        window.alert('You did not enter a name')
+        return
+      }
 
-    commit('createPresentation', {title, userId})
+      return api.createPresentation(title).then(res => {
+        const id = res.headers.newpresentationid
+        commit('createPresentation', {id, title, userId})
+      })
+    } catch (error) {
+      console.error(error)
+    }
   },
   deletePresentation ({commit}, presentationId) {
     const confirm = window.confirm('Are you sure you want to delete this presentation?')
@@ -50,10 +57,9 @@ const mutations = {
       Vue.set(state.presentations, presentations[i].id, presentations[i])
     }
   },
-  createPresentation (state, {userId, title}) {
-    const newPresId = Math.max(0, ...state.presentations.map(p => p.id)) + 1
+  createPresentation (state, {id, userId, title}) {
     state.presentations.push({
-      id: newPresId,
+      id,
       userId,
       title,
       slides: []
