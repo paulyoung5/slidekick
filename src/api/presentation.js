@@ -14,10 +14,11 @@ export const savePresentation = (presentation, success, failure) => {
 }
 
 export default {
+<<<<<<< HEAD
   getPresentation (id) {
     return axios.get(`/presentations/${id}`).then(({data}) => data.presentation)
   },
-  getPresentationsForUser (userId) {
+  getPresentationsForUser () {
     return axios.get('/presentations')
   },
   createPresentation (title) {
