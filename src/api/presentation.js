@@ -7,10 +7,11 @@ export const getPresentation = (id, success, failure) =>
 
 export const savePresentation = (presentation, success, failure) => {
   if (presentation.id) {
-    return axios.post(`/presentations/${presentation.id}`, presentation)
-      .then(success).catch(failure)
+    // Updating existing presentation
+    return axios.put(`/presentations/${presentation.id}`).then(success).catch(failure)
   }
-  return axios.post('/presentations/new', presentation).then(success).catch(failure)
+  // Create new presentation
+  return axios.post('/presentations').then(success).catch(failure)
 }
 
 const presentations = [
@@ -93,5 +94,12 @@ export default {
   },
   getPresentationsForUser (userId) {
     return axios.get('/presentations')
+  },
+  savePresentation (presentation) => {
+    if (presentation.id) {
+    return axios.post(`/presentations/${presentation.id}`, presentation)
+      .then(success).catch(failure)
+    }
+    return axios.post('/presentations/new', presentation).then(success).catch(failure)
   }
 }
