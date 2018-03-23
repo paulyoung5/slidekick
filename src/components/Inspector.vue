@@ -91,6 +91,21 @@
   outline-color: rgba(0, 0, 0, 0.4);
 }
 
+.delete {
+  margin: 1em;
+  padding: 0.8em 1em;
+  border-radius: 5px;
+
+  background-color: hsl(0, 100%, 60%);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 1em;
+  align-items: center;
+}
+.delete:hover {
+  background-color: hsl(0, 100%, 55%);
+}
+
 @media only screen 
       and (device-width : 375px) 
       and (device-height : 812px) 
@@ -184,7 +199,10 @@
       </div>
     </div>
 
-    <a href="#" v-if="currentElement" @click="deleteElement(currentElement.id)">Delete element</a>
+    <a href="#" class="delete" v-if="currentElement" @click="deleteElement(currentElement.id)">
+      <i class="material-icons">delete</i>
+      <span>Delete element</span>
+    </a>
   </div>
 </template>
 
