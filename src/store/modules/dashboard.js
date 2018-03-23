@@ -81,7 +81,11 @@ const actions = {
     if (!newTitle) {
       window.alert(`The entered title wasn't valid. Please try again.`)
     }
-    api.savePresentation(presentation)
+
+    const p = JSON.parse(JSON.stringify(presentation))
+    p.title = newTitle
+
+    api.savePresentation(p)
       .then(res => commit('fetchPresentation', res.data.presentation))
       .catch(res => window.alert(res.err.message))
   }

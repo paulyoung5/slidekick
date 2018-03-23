@@ -227,7 +227,7 @@
             <i class="material-icons">more_vert</i>
             <ul>
               <li>
-                <a href="#" @click="renamePresentation(presentation.id)">
+                <a href="#" @click="renamePresentation(presentation)">
                   <i class="material-icons">edit</i>
                   <span>Rename presentation</span>
                 </a>
