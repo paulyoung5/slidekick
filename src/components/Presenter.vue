@@ -246,6 +246,12 @@ export default {
   },
   created () {
     this.$store.dispatch('presenter/fetchPresentation', this.$route.params.presentationId)
+      // eslint-disable-next-line
+      .then(() => this.loading = false)
+      .catch(() => {
+        window.alert('Failed to load presentation.')
+        this.$router.go(-1)
+      })
   },
   mounted () {
     document.onkeydown = this.onKeyup

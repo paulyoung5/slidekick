@@ -167,20 +167,22 @@
 
 <template>
   <div class="editor" @click="clearInspector" :class="computedStyles">
-    <slides-toolbar></slides-toolbar>
+    <template v-if="!loading">
+      <slides-toolbar></slides-toolbar>
 
-    <toolbox></toolbox>
+      <toolbox></toolbox>
 
-    <inspector></inspector>
+      <inspector></inspector>
 
-    <slide-controls></slide-controls>
+      <slide-controls></slide-controls>
 
-    <current-slide :selected-slide-index="selectedSlideIndex" :slides="slides" :zoom-level="zoomLevel"></current-slide>
+      <current-slide :selected-slide-index="selectedSlideIndex" :slides="slides" :zoom-level="zoomLevel"></current-slide>
 
-    <div class="no-slides-message">
-      <i class="material-icons">create</i>
-      To get started, add a new slide
-    </div>
+      <div class="no-slides-message">
+        <i class="material-icons">create</i>
+        To get started, add a new slide
+      </div>
+    </template>
   </div>
 </template>
 
@@ -202,8 +204,17 @@ export default {
     'slide-controls': SlideControls,
     'current-slide': CurrentSlide
   },
+  data () {
+    return { loading: true }
+  },
   created () {
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
+      // eslint-disable-next-line
+      .then(() => this.loading = false)
+      .catch(() => {
+        window.alert('Failed to load presentation.')
+        this.$router.go(-1)
+      })
   },
   computed: {
     ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),

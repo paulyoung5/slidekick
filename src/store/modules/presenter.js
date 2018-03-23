@@ -27,15 +27,20 @@ const getters = {
 }
 
 const actions = {
-  async fetchPresentation ({commit}, presentationId) {
-    try {
-      const presentation = await api.getPresentation(presentationId)
+  async fetchPresentation ({ commit }, presentationId) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        commit('setPageLoading', true, { root: true })
+        const res = await api.getPresentation(presentationId)
 
-      commit('setPresentation', presentation)
-      commit('setPageLoading', false, { root: true })
-    } catch (error) {
-      console.error(error)
-    }
+        commit('setPresentation', res.data.presentation)
+        commit('setPageLoading', false, { root: true })
+        resolve()
+      } catch (error) {
+        console.error(error)
+        reject(error)
+      }
+    })
   },
 
   next ({commit}) {
