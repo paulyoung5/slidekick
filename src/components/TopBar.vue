@@ -13,7 +13,7 @@
   
   display: grid;
   align-content: center;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 2fr 1.2fr;
   grid-template-rows: 60px;
   grid-template-areas: "primary-actions brand secondary-actions";
 }
@@ -115,11 +115,9 @@
   grid-area: secondary-actions;
   padding: 1em;
 
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  grid-gap: 1em;
+  display: flex;
   align-items: center;
-  justify-items: end;
+  justify-content: flex-end;
 }
 
 .secondary-actions a {
@@ -129,6 +127,7 @@
   font-size: 1em;
   font-weight: bold;
   transition: 0.3s all ease-in-out;
+  margin-left: 1em;
 
   display: grid;
   grid-gap: 1em;
