@@ -257,11 +257,11 @@ export default {
   methods: {
     ...mapActions('dashboard', ['fetchPresentations', 'createNewPresentation', 'renamePresentation', 'deletePresentation']),
     createNew () {
-      return this.createNewPresentation(this.$auth.user().id)
+      return this.createNewPresentation()
     }
   },
   created () {
-    this.fetchPresentations(this.$auth.user().id)
+    this.fetchPresentations()
   }
 }
 </script>
