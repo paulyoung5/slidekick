@@ -1,31 +1,31 @@
 import Vue from 'vue'
-import api from '../../api/presentation'
+import * as api from '../../api/presentation'
 
 const blankPresentation = {
-  title: 'New Presentation'
+  title: 'New Presentation',
   slides: [
     {
       backgroundColour: '#FFFFFF',
       elements: [
-          {
-            id: 0,
-            type: 'TEXT',
-            properties: {
-              x: '30px',
-              y: '30px',
-              fill: '#000000',
-              fontFamily: 'Verdana',
-              fontSize: '20px',
-              content: 'Title goes here'
-            }
+        {
+          id: 0,
+          type: 'TEXT',
+          properties: {
+            x: '30px',
+            y: '30px',
+            fill: '#000000',
+            fontFamily: 'Verdana',
+            fontSize: '20px',
+            content: 'Title goes here'
           }
-        ]
+        }
+      ]
     }
   ]
 }
 
 const state = {
-  presentations: []
+  presentations: {}
 }
 
 const getters = {
@@ -33,35 +33,36 @@ const getters = {
 }
 
 const actions = {
-  async createPresentation () {
+  async createPresentation ({ commit }) {
     try {
       const res = await api.savePresentation(blankPresentation)
-      commit('setPresentation', res.data.presentation)
+      commit('fetchPresentation', res.data.presentation)
     } catch (error) {
       console.error(error)
     }
   },
-  async fetchPresentations ({commit}, userId) {
+  async fetchPresentations ({ commit }) {
     try {
       // At this point, get the presentation data from mongodb! we can then update the state
-      const res = await api.getPresentationsForUser(userId)
-      commit('setPresentations', res.data.presentations)
+      const res = await api.getPresentations()
+      commit('fetchPresentations', res.data.presentations)
       commit('setPageLoading', false, { root: true })
     } catch (error) {
       console.error(error)
     }
   },
-  async createNewPresentation ({commit}, userId) {
+  async createNewPresentation ({ commit }) {
     try {
       const title = window.prompt('Please enter a name for your presentation')
       if (!title) {
-        window.alert('You did not enter a name')
+        window.alert('Please enter a name.')
         return
       }
+      const presentation = blankPresentation
+      presentation.title = title
 
-      return api.createPresentation(title).then(res => {
-        const id = res.headers.newpresentationid
-        commit('createPresentation', {id, title, userId})
+      return api.savePresentation(presentation).then(res => {
+        commit('fetchPresentation', res.data.presentation)
       })
     } catch (error) {
       console.error(error)
@@ -70,38 +71,33 @@ const actions = {
   deletePresentation ({commit}, presentationId) {
     const confirm = window.confirm('Are you sure you want to delete this presentation?')
     if (confirm) {
-      commit('deletePresentation', presentationId)
+      api.deletePresentation(presentationId)
+        .then(() => commit('deletePresentation', presentationId))
+        .catch(() => window.alert('Failed to delete presentation, please try again'))
     }
   },
-  renamePresentation ({commit}, presentationId) {
+  renamePresentation ({commit}, presentation) {
     const newTitle = window.prompt('Please enter the new title')
     if (!newTitle) {
       window.alert(`The entered title wasn't valid. Please try again.`)
     }
-    commit('setPresentationName', {presentationId, newTitle})
+    api.savePresentation(presentation)
+      .then(res => commit('fetchPresentation', res.data.presentation))
+      .catch(res => window.alert(res.err.message))
   }
 }
 
 const mutations = {
-  setPresentations (state, presentations) {
+  fetchPresentations (state, presentations) {
     for (let i = 0; i < presentations.length; i += 1) {
       Vue.set(state.presentations, presentations[i].id, presentations[i])
     }
   },
-  createPresentation (state, {id, userId, title}) {
-    state.presentations.push({
-      id,
-      userId,
-      title,
-      slides: []
-    })
+  fetchPresentation (state, presentation) {
+    Vue.set(state.presentations, presentation.id, presentation)
   },
   deletePresentation (state, presentationId) {
-    state.presentations = state.presentations.filter(p => p.id !== presentationId)
-  },
-  setPresentationName (state, {presentationId, newTitle}) {
-    const presentation = state.presentations.filter(p => p.id === presentationId)[0]
-    presentation.title = newTitle
+    Vue.delete(state.presentations, presentationId)
   }
 }
 

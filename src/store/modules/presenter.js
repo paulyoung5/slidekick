@@ -1,4 +1,4 @@
-import api from '../../api/presentation'
+import * as api from '../../api/presentation'
 
 const state = {
   selectedSlideIndex: 0,
