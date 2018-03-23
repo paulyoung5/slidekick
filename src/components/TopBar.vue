@@ -116,6 +116,7 @@
   padding: 1em;
 
   display: grid;
+  grid-template-columns: repeat(3, auto);
   grid-gap: 1em;
   align-items: center;
   justify-items: end;
@@ -193,6 +194,17 @@
       </div>
 
       <div class="secondary-actions">
+        <a
+          href="#"
+          ref="copyButton"
+          v-if="editorMode"
+          v-clipboard:copy="presentationUrl"
+          v-clipboard:success="onCopy"
+          v-clipboard:error="onError"
+        >
+          <i class="material-icons">share</i>
+          <span>Share</span>
+        </a>
         <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode">
           <i class="material-icons">play_circle_outline</i>
           <span>Present</span>
@@ -206,7 +218,10 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
 
 export default {
   name: 'top-bar',
@@ -220,6 +235,9 @@ export default {
       set (value) {
         this.updateTitle(value)
       }
+    },
+    presentationUrl () {
+      return window.location.href
     },
     hideTopBar () {
       return this.$route.meta.hideTopBar
@@ -244,6 +262,12 @@ export default {
       setTimeout(() => {
         this.setPageLoading(false)
       }, 500)
+    },
+    onCopy (e) {
+      window.alert('Editing link copied to clipboard')
+    },
+    onError (e) {
+      window.alert('Failed to copy link')
     }
   }
 }
