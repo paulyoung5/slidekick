@@ -188,6 +188,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import io from 'socket.io-client'
 
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
@@ -205,7 +206,10 @@ export default {
     'current-slide': CurrentSlide
   },
   data () {
-    return { loading: true }
+    return {
+      loading: true,
+      socket: io('http://localhost:3000')
+    }
   },
   created () {
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
@@ -233,6 +237,22 @@ export default {
         this.$store.commit('editor/setSelectedElementIndex', null)
       }
     }
+  },
+  mounted () {
+    this.socket.on('connect', () => {
+      console.info('Connected to server socket')
+
+      this.socket.emit('joined-room', {
+        presentationId: this.$route.params.presentationId,
+        user: {
+          name: 'Ronnie'
+        }
+      })
+    })
+
+    this.socket.on('request-user', () => {
+
+    })
   }
 }
 </script>
