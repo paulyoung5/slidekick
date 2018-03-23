@@ -214,7 +214,7 @@
         <i class="material-icons">add</i>
       </a>
       
-      <router-link v-for="presentation in presentations" :key="presentation.id" :to="{ name: 'editor', params: { presentationId: presentation.id }}">
+      <router-link v-for="presentation in presentations" :key="presentation.id" :to="{ name: 'editor', params: { presentationId: presentation.id }}" @click="setPageLoading(true)">
         <div class="preview">
           slide preview goes here!
         </div>
