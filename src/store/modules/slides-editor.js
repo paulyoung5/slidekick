@@ -286,7 +286,9 @@ const mutations = {
       return null
     }
     const newTextElement = JSON.parse(DEFAULT_NEW_TEXT)
-    const newElementId = Math.max(0, ...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
+    const newElementId = Math.max(0, ...state.presentation.slides[state.selectedSlideIndex].elements
+      .filter(el => el.id && Number.isInteger(el.id))
+      .map(el => el.id) + 1)
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId
@@ -301,7 +303,9 @@ const mutations = {
     newImageElement.properties.href = url
     newImageElement.properties.width = width
     newImageElement.properties.height = height
-    const newElementId = Math.max(0, ...state.presentation.slides[state.selectedSlideIndex].elements.map(el => el.id)) + 1
+    const newElementId = Math.max(0, ...state.presentation.slides[state.selectedSlideIndex].elements
+      .filter(el => el.id && Number.isInteger(el.id))
+      .map(el => el.id) + 1)
     newImageElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
     state.selectedElementIndex = newElementId
