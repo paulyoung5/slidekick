@@ -279,10 +279,6 @@ export default {
         presentationId: this.presentationId,
         newTitle: value
       })
-      this.socket.emit('renamed-presentation', {
-        presentationId: this.presentationId,
-        newTitle: value
-      })
     }
   }
 }

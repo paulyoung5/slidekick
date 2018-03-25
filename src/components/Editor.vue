@@ -189,6 +189,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import io from 'socket.io-client'
+import socketHandlers from './../assets/socket-handlers'
 
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
@@ -212,6 +213,8 @@ export default {
     }
   },
   created () {
+    const vm = this
+    socketHandlers(vm, this.socket)
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
       // eslint-disable-next-line
       .then(() => this.loading = false)
@@ -222,7 +225,7 @@ export default {
   },
   computed: {
     ...mapGetters(['current_user', 'is_logged_in']),
-    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
+    ...mapGetters('editor', ['presentation', 'slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
     computedStyles () {
       return {
         'no-slides': !this.slides || !this.slides.length
@@ -230,7 +233,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['updateTitle']),
+    ...mapActions('editor', ['initSocket', 'updateTitle']),
     inspectElement (index) {
       this.$store.commit('editor/setSelectedElementIndex', index)
     },
@@ -241,23 +244,6 @@ export default {
     }
   },
   mounted () {
-    const vm = this
-    this.socket.on('connect', () => {
-      console.info('Connected to server socket')
-
-      this.socket.emit('joined-room', {
-        presentationId: this.$route.params.presentationId,
-        user: this.current_user
-      })
-    })
-
-    this.socket.on('renamed-presentation', ({presentationId, newTitle}) => {
-      vm.updateTitle(newTitle)
-    })
-
-    this.socket.on('reordered-slides', () => {
-      console.info('Received reordered-slides')
-    })
   },
   beforeDestroy () {
     this.socket.close()
