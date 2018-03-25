@@ -105,6 +105,30 @@ const actions = {
       }
     })
   },
+  async renamePresentation ({commit}, {presentationId, newTitle}) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!newTitle) {
+          return window.alert(`The entered title wasn't valid. Please try again.`)
+        }
+
+        const res = await api.getPresentation(presentationId)
+        const p = JSON.parse(JSON.stringify(res.data.presentation))
+        p.title = newTitle
+
+        return api.savePresentation(p)
+          .then(res => {
+            commit('setPresentation', res.data.presentation)
+            console.info('Presentation successfully renamed')
+            resolve()
+          })
+          .catch(res => window.alert(res.err.message))
+      } catch (error) {
+        console.error(error)
+        reject(error)
+      }
+    })
+  },
 
   zoomIn ({commit}) {
     commit('zoomIn')
