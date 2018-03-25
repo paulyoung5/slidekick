@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import * as api from '../../api/presentation'
 import io from 'socket.io-client'
 import socketMutations from './socket-mutations'
@@ -160,6 +161,10 @@ const actions = {
     commit('createSlide')
   },
 
+  replaceSlide ({ commit }, {slideIndex, slide}) {
+    commit('replaceSlide', {slideIndex, slide})
+  },
+
   deleteSlide ({ commit }, slideIndex) {
     const confirm = window.confirm('Are you sure you want to delete this slide?')
     if (confirm) {
@@ -168,12 +173,15 @@ const actions = {
   },
 
   moveSlide ({ commit }, { draggingSlideIndex, replaceSlideIndex }) {
-    console.info(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
     commit('moveSlide', { draggingSlideIndex, replaceSlideIndex })
   },
 
   setSlides ({ commit }, slides) {
     commit('setSlides', slides)
+  },
+
+  setElements ({commit}, {slideIndex, elements}) {
+    commit('setElements', {slideIndex, elements})
   },
 
   createText ({ commit }, socket) {
@@ -260,6 +268,10 @@ const mutations = {
   setSelectedSlideIndex (state, selectedIndex) {
     state.selectedSlideIndex = selectedIndex
     state.selectedElementIndex = null
+  },
+
+  setElements (state, {slideIndex, elements}) {
+    state.presentation.slides[slideIndex].elements = elements
   },
 
   zoomIn (state) {
@@ -351,7 +363,10 @@ const mutations = {
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId
-    state.socket.emit('created-element', state.presentation.slides[state.selectedSlideIndex].elements)
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   createImage (state, { url, height, width }) {
@@ -369,6 +384,10 @@ const mutations = {
     newImageElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
     state.selectedElementIndex = newElementId
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   deleteElement (state, selectedElementIndex) {
@@ -381,6 +400,10 @@ const mutations = {
 
     const slide = state.presentation.slides[state.selectedSlideIndex]
     slide.elements = slide.elements.filter(el => el.id !== selectedElementIndex)
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setBackgroundColour (state, newBackgroundColour) {
@@ -389,6 +412,14 @@ const mutations = {
     }
 
     state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
+    state.socket.emit('changed-slide-background-colour', {
+      slideIndex: state.selectedSlideIndex,
+      slide: state.presentation.slides[state.selectedSlideIndex]
+    })
+  },
+
+  replaceSlide (state, {slideIndex, slide}) {
+    Vue.set(state.presentation.slides, slideIndex, slide)
   },
 
   setElementX (state, { element, value }) {
@@ -397,6 +428,10 @@ const mutations = {
       return null
     }
     element.properties.x = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setElementY (state, { element, value }) {
@@ -405,6 +440,10 @@ const mutations = {
       return null
     }
     element.properties.y = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setElementCoordinates (state, { element, x, y }) {
@@ -414,6 +453,10 @@ const mutations = {
     }
     element.properties.x = x
     element.properties.y = y
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setElementFontFamily (state, { element, value }) {
@@ -422,6 +465,10 @@ const mutations = {
       return null
     }
     element.properties.fontFamily = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setElementFontSize (state, { element, value }) {
@@ -430,6 +477,10 @@ const mutations = {
       return null
     }
     element.properties.fontSize = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setElementFill (state, { element, value }) {
@@ -438,6 +489,10 @@ const mutations = {
       return null
     }
     element.properties.fill = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setElementContent (state, { element, value }) {
@@ -446,6 +501,10 @@ const mutations = {
       return null
     }
     element.properties.content = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   }
 }
 
