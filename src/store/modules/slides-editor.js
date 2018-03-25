@@ -107,8 +107,8 @@ const actions = {
     })
   },
 
-  async renamePresentation ({ commit }, { presentationId, newTitle }) {
-    commit('notifyRenamedPresentation', newTitle)
+  async renamePresentation ({ commit }, { presentationId, socket, newTitle }) {
+    commit('notifyRenamedPresentation', {socket, title: newTitle})
     return new Promise(async (resolve, reject) => {
       try {
         if (!newTitle) {
@@ -165,8 +165,9 @@ const actions = {
     commit('moveSlide', { draggingSlideIndex, replaceSlideIndex })
   },
 
-  createText ({ commit }) {
+  createText ({ commit }, socket) {
     commit('createText')
+    commit('notifyCreatedElement', socket)
   },
 
   createImage ({ commit }) {
