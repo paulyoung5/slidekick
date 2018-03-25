@@ -64,7 +64,6 @@
   align-items: center;
   justify-content: center;
   border-radius: 100px;
-  background-color: red;
   font-size: 1.2em;
   padding: 0.5em 0.8em;
   font-weight: bold;
@@ -73,6 +72,26 @@
   transition: 0.2s all ease-in-out;
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
   position: relative;
+}
+
+.slide-controls .users li:nth-child(1) {
+  background-color: rgb(26, 55, 90);
+}
+
+.slide-controls .users li:nth-child(2) {
+  background-color: #632857;
+}
+
+.slide-controls .users li:nth-child(3) {
+  background-color: #1CBDAB;
+}
+
+.slide-controls .users li:nth-child(4) {
+  background-color: #D81D41;
+}
+
+.slide-controls .users li:nth-child(5) {
+  background-color: #FF501E;
 }
 
 .slide-controls .users li span {
@@ -121,7 +140,7 @@
     </ul>
 
     <ul class="users">
-      <li v-for="user in activeUsers">
+      <li v-for="user in activeUsers" v-if="user.id !== current_user.id">
         {{ user.name | initial }}
         <span>{{ user.name }} is editing</span>
       </li>
@@ -135,6 +154,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'slide-controls',
   computed: {
+    ...mapGetters(['current_user']),
     ...mapGetters('editor', ['zoomLevel', 'activeUsers'])
   },
   methods: {
