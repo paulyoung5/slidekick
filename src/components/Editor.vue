@@ -187,7 +187,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import socketHandlers from './../assets/socket-handlers'
 
 import SlidesToolbar from './SlidesToolbar.vue'
 import Toolbox from './Toolbox.vue'
@@ -205,7 +206,9 @@ export default {
     'current-slide': CurrentSlide
   },
   data () {
-    return { loading: true }
+    return {
+      loading: true
+    }
   },
   created () {
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
@@ -217,7 +220,8 @@ export default {
       })
   },
   computed: {
-    ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
+    ...mapGetters(['current_user', 'is_logged_in']),
+    ...mapGetters('editor', ['socket', 'presentation', 'slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
     computedStyles () {
       return {
         'no-slides': !this.slides || !this.slides.length
@@ -225,6 +229,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('editor', ['initSocket', 'updateTitle', 'setSlides', 'setElements', 'replaceSlide', 'setUsersList']),
     inspectElement (index) {
       this.$store.commit('editor/setSelectedElementIndex', index)
     },
@@ -233,6 +238,14 @@ export default {
         this.$store.commit('editor/setSelectedElementIndex', null)
       }
     }
+  },
+  mounted () {
+    const vm = this
+    this.initSocket()
+    socketHandlers(vm, this.socket)
+  },
+  beforeDestroy () {
+    this.socket.close()
   }
 }
 </script>

@@ -175,7 +175,7 @@
         </router-link>
 
         <div class="presentation-title" v-if="editorMode">
-          <input type="text" v-model="presentationTitle">
+          <input type="text" v-model="presentationTitle" @blur="onBlur">
           <i class="material-icons">edit</i>
         </div>
       </div>
@@ -224,6 +224,12 @@ Vue.use(VueClipboard)
 
 export default {
   name: 'top-bar',
+  data () {
+    return {
+      userTyping: false,
+      timer: null
+    }
+  },
   computed: {
     ...mapGetters(['pageLoading']),
     ...mapGetters('editor', ['title', 'presentationId']),
@@ -253,7 +259,7 @@ export default {
   },
   methods: {
     ...mapActions(['setPageLoading']),
-    ...mapActions('editor', ['updateTitle']),
+    ...mapActions('editor', ['updateTitle', 'renamePresentation']),
     logout () {
       this.$auth.logout()
       this.setPageLoading(true)
@@ -267,6 +273,12 @@ export default {
     },
     onError (e) {
       window.alert('Failed to copy link')
+    },
+    onBlur ({target: {value}}) {
+      this.renamePresentation({
+        presentationId: this.presentationId,
+        newTitle: value
+      })
     }
   }
 }

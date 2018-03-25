@@ -1,6 +1,10 @@
+import Vue from 'vue'
 import * as api from '../../api/presentation'
+import io from 'socket.io-client'
+import socketMutations from './socket-mutations'
 
 const state = {
+  socket: null,
   selectedSlideIndex: 0,
   zoomLevel: 1,
   selectedElementIndex: -1,
@@ -66,6 +70,7 @@ const DEFAULT_NEW_IMAGE = JSON.stringify({
 })
 
 const getters = {
+  socket: state => state.socket,
   presentation: state => state.presentation,
   presentationId: state => state.presentation ? state.presentation.id : -1,
   title: state => state.presentation.title,
@@ -91,6 +96,10 @@ const getters = {
 }
 
 const actions = {
+  initSocket ({commit}) {
+    commit('initSocket')
+  },
+
   async fetchPresentation ({ commit }, presentationId) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -106,43 +115,85 @@ const actions = {
     })
   },
 
-  zoomIn ({commit}) {
+  async renamePresentation ({ commit }, { presentationId, socket, newTitle }) {
+    commit('notifyRenamedPresentation', {title: newTitle})
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!newTitle) {
+          return window.alert(`The entered title wasn't valid. Please try again.`)
+        }
+
+        const res = await api.getPresentation(presentationId)
+        const p = JSON.parse(JSON.stringify(res.data.presentation))
+        p.title = newTitle
+
+        return api.savePresentation(p)
+          .then(res => {
+            commit('setPresentation', res.data.presentation)
+            console.info('Presentation successfully renamed')
+            resolve()
+          })
+          .catch(res => window.alert(res.err.message))
+      } catch (error) {
+        console.error(error)
+        reject(error)
+      }
+    })
+  },
+
+  zoomIn ({ commit }) {
     commit('zoomIn')
   },
 
-  zoomOut ({commit}) {
+  zoomOut ({ commit }) {
     commit('zoomOut')
   },
 
-  updateTitle ({commit}, value) {
+  updateTitle ({ commit }, value) {
     commit('setTitle', value)
   },
 
-  selectSlideFromList ({commit}, selectedSlideIndex) {
+  selectSlideFromList ({ commit }, selectedSlideIndex) {
     commit('setSelectedSlideIndex', selectedSlideIndex)
   },
 
-  createSlide ({commit}) {
+  createSlide ({ commit }) {
     commit('createSlide')
   },
 
-  deleteSlide ({commit}, slideIndex) {
+  replaceSlide ({ commit }, {slideIndex, slide}) {
+    commit('replaceSlide', {slideIndex, slide})
+  },
+
+  deleteSlide ({ commit }, slideIndex) {
     const confirm = window.confirm('Are you sure you want to delete this slide?')
     if (confirm) {
       commit('deleteSlide', slideIndex)
     }
   },
 
-  moveSlide ({commit}, {draggingSlideIndex, replaceSlideIndex}) {
-    console.info(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
-    commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
+  moveSlide ({ commit }, { draggingSlideIndex, replaceSlideIndex }) {
+    commit('moveSlide', { draggingSlideIndex, replaceSlideIndex })
   },
 
-  createText ({commit}) {
+  setSlides ({ commit }, slides) {
+    commit('setSlides', slides)
+  },
+
+  setElements ({commit}, {slideIndex, elements}) {
+    commit('setElements', {slideIndex, elements})
+  },
+
+  setUsersList ({commit}, usersList) {
+    commit('setUsersList', usersList)
+  },
+
+  createText ({ commit }, socket) {
     commit('createText')
+    commit('notifyCreatedElement', socket)
   },
 
-  createImage ({commit}) {
+  createImage ({ commit }) {
     const url = window.prompt('Please enter the URL of new image')
     const height = window.prompt('Please enter the height (in pixels)')
     const width = window.prompt('Please enter the width (in pixels)')
@@ -152,54 +203,60 @@ const actions = {
       return null
     }
 
-    commit('createImage', {url, height, width})
+    commit('createImage', { url, height, width })
   },
 
-  inspectElement ({commit}, selectedElementIndex) {
+  inspectElement ({ commit }, selectedElementIndex) {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
 
-  deleteElement ({commit}, selectedElementIndex) {
+  deleteElement ({ commit }, selectedElementIndex) {
     const confirm = window.confirm('Are you sure you want to delete this?')
     if (confirm) {
       commit('deleteElement', selectedElementIndex)
     }
   },
 
-  updateBackgroundColour ({commit}, value) {
+  updateBackgroundColour ({ commit }, value) {
     commit('setBackgroundColour', value)
   },
 
-  updateX ({commit}, {element, value}) {
-    commit('setElementX', {element, value})
+  updateX ({ commit }, { element, value }) {
+    commit('setElementX', { element, value })
   },
 
-  updateY ({commit}, {element, value}) {
-    commit('setElementY', {element, value})
+  updateY ({ commit }, { element, value }) {
+    commit('setElementY', { element, value })
   },
 
-  updateCoordinates ({commit}, {element, x, y}) {
-    commit('setElementCoordinates', {element, x, y})
+  updateCoordinates ({ commit }, { element, x, y }) {
+    commit('setElementCoordinates', { element, x, y })
   },
 
-  updateFontFamily ({commit}, {element, value}) {
-    commit('setElementFontFamily', {element, value})
+  updateFontFamily ({ commit }, { element, value }) {
+    commit('setElementFontFamily', { element, value })
   },
 
-  updateFontSize ({commit}, {element, value}) {
-    commit('setElementFontSize', {element, value})
+  updateFontSize ({ commit }, { element, value }) {
+    commit('setElementFontSize', { element, value })
   },
 
-  updateFill ({commit}, {element, value}) {
-    commit('setElementFill', {element, value})
+  updateFill ({ commit }, { element, value }) {
+    commit('setElementFill', { element, value })
   },
 
-  updateContent ({commit}, {element, value}) {
-    commit('setElementContent', {element, value})
+  updateContent ({ commit }, { element, value }) {
+    commit('setElementContent', { element, value })
   }
 }
 
 const mutations = {
+  initSocket (state) {
+    state.socket = io('http://localhost:3000')
+  },
+
+  ...socketMutations,
+
   setPresentation (state, presentation) {
     state.presentation = presentation
   },
@@ -215,6 +272,14 @@ const mutations = {
   setSelectedSlideIndex (state, selectedIndex) {
     state.selectedSlideIndex = selectedIndex
     state.selectedElementIndex = null
+  },
+
+  setElements (state, {slideIndex, elements}) {
+    state.presentation.slides[slideIndex].elements = elements
+  },
+
+  setUsersList ({commit}, usersList) {
+    state.activeUsers = usersList
   },
 
   zoomIn (state) {
@@ -245,6 +310,11 @@ const mutations = {
 
     state.presentation.slides.push(JSON.parse(DEFAULT_NEW_SLIDE))
     state.selectedSlideIndex = state.presentation.slides.length - 1
+
+    state.socket.emit('modified-slides', {
+      presentationId: state.presentation.id,
+      slides: state.presentation.slides
+    })
   },
 
   deleteSlide (state, slideIndex) {
@@ -266,9 +336,14 @@ const mutations = {
         state.selectedSlideIndex = 0
       }
     }
+
+    state.socket.emit('modified-slides', {
+      presentationId: state.presentation.id,
+      slides: state.presentation.slides
+    })
   },
 
-  moveSlide (state, {draggingSlideIndex, replaceSlideIndex}) {
+  moveSlide (state, { draggingSlideIndex, replaceSlideIndex }) {
     if (!state.presentation.slides.length ||
       !state.presentation.slides[draggingSlideIndex] ||
       !state.presentation.slides[replaceSlideIndex]) {
@@ -278,6 +353,10 @@ const mutations = {
 
     state.presentation.slides.splice(draggingSlideIndex, 0, state.presentation.slides.splice(replaceSlideIndex, 1)[0])
     state.selectedSlideIndex = replaceSlideIndex
+    state.socket.emit('modified-slides', {
+      presentationId: state.presentation.id,
+      slides: state.presentation.slides
+    })
   },
 
   createText (state) {
@@ -292,9 +371,13 @@ const mutations = {
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  createImage (state, {url, height, width}) {
+  createImage (state, { url, height, width }) {
     if (!state.presentation || !state.presentation.slides[state.selectedSlideIndex]) {
       console.error('Unable to create new image element: no active presentation and/or slide')
       return null
@@ -309,6 +392,10 @@ const mutations = {
     newImageElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
     state.selectedElementIndex = newElementId
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   deleteElement (state, selectedElementIndex) {
@@ -321,6 +408,10 @@ const mutations = {
 
     const slide = state.presentation.slides[state.selectedSlideIndex]
     slide.elements = slide.elements.filter(el => el.id !== selectedElementIndex)
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
   setBackgroundColour (state, newBackgroundColour) {
@@ -329,63 +420,99 @@ const mutations = {
     }
 
     state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
+    state.socket.emit('changed-slide-background-colour', {
+      slideIndex: state.selectedSlideIndex,
+      slide: state.presentation.slides[state.selectedSlideIndex]
+    })
   },
 
-  setElementX (state, {element, value}) {
+  replaceSlide (state, {slideIndex, slide}) {
+    Vue.set(state.presentation.slides, slideIndex, slide)
+  },
+
+  setElementX (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the X coordinate for an element (element was null)')
       return null
     }
     element.properties.x = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  setElementY (state, {element, value}) {
+  setElementY (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the Y coordinate for an element (element was null)')
       return null
     }
     element.properties.y = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  setElementCoordinates (state, {element, x, y}) {
+  setElementCoordinates (state, { element, x, y }) {
     if (!element) {
       console.error('Failed to set coordinates for an element (element was null)')
       return null
     }
     element.properties.x = x
     element.properties.y = y
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  setElementFontFamily (state, {element, value}) {
+  setElementFontFamily (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the font family for an element (element was null)')
       return null
     }
     element.properties.fontFamily = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  setElementFontSize (state, {element, value}) {
+  setElementFontSize (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the font size for an element (element was null)')
       return null
     }
     element.properties.fontSize = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  setElementFill (state, {element, value}) {
+  setElementFill (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the fill for an element (element was null)')
       return null
     }
     element.properties.fill = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   },
 
-  setElementContent (state, {element, value}) {
+  setElementContent (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the content for an element (element was null)')
       return null
     }
     element.properties.content = value
+    state.socket.emit('modified-elements', {
+      slideIndex: state.selectedSlideIndex,
+      elements: state.presentation.slides[state.selectedSlideIndex].elements
+    })
   }
 }
 
