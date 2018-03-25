@@ -8,6 +8,8 @@ export default function (vm, socket) {
     })
   })
 
+  window.onbeforeunload = () => socket.emit('left-room')
+
   socket.on('renamed-presentation', newTitle => {
     console.info('received a rename event')
     vm.updateTitle(newTitle)
@@ -26,5 +28,11 @@ export default function (vm, socket) {
   socket.on('modified-slides', slides => {
     console.info('Received a modified-slides event')
     vm.setSlides(slides)
+  })
+
+  socket.on('refresh-users-list', usersList => {
+    console.info('Received a refresh-users-list event')
+    console.log(usersList)
+    vm.setUsersList(usersList)
   })
 }

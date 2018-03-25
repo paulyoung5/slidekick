@@ -184,6 +184,10 @@ const actions = {
     commit('setElements', {slideIndex, elements})
   },
 
+  setUsersList ({commit}, usersList) {
+    commit('setUsersList', usersList)
+  },
+
   createText ({ commit }, socket) {
     commit('createText')
     commit('notifyCreatedElement', socket)
@@ -272,6 +276,10 @@ const mutations = {
 
   setElements (state, {slideIndex, elements}) {
     state.presentation.slides[slideIndex].elements = elements
+  },
+
+  setUsersList ({commit}, usersList) {
+    state.activeUsers = usersList
   },
 
   zoomIn (state) {
