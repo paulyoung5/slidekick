@@ -1,4 +1,5 @@
 import * as api from '../../api/presentation'
+import socketMutations from './socket-mutations'
 
 const state = {
   selectedSlideIndex: 0,
@@ -105,7 +106,9 @@ const actions = {
       }
     })
   },
-  async renamePresentation ({commit}, {presentationId, newTitle}) {
+
+  async renamePresentation ({ commit }, { presentationId, newTitle }) {
+    commit('notifyRenamedPresentation', newTitle)
     return new Promise(async (resolve, reject) => {
       try {
         if (!newTitle) {
@@ -130,43 +133,43 @@ const actions = {
     })
   },
 
-  zoomIn ({commit}) {
+  zoomIn ({ commit }) {
     commit('zoomIn')
   },
 
-  zoomOut ({commit}) {
+  zoomOut ({ commit }) {
     commit('zoomOut')
   },
 
-  updateTitle ({commit}, value) {
+  updateTitle ({ commit }, value) {
     commit('setTitle', value)
   },
 
-  selectSlideFromList ({commit}, selectedSlideIndex) {
+  selectSlideFromList ({ commit }, selectedSlideIndex) {
     commit('setSelectedSlideIndex', selectedSlideIndex)
   },
 
-  createSlide ({commit}) {
+  createSlide ({ commit }) {
     commit('createSlide')
   },
 
-  deleteSlide ({commit}, slideIndex) {
+  deleteSlide ({ commit }, slideIndex) {
     const confirm = window.confirm('Are you sure you want to delete this slide?')
     if (confirm) {
       commit('deleteSlide', slideIndex)
     }
   },
 
-  moveSlide ({commit}, {draggingSlideIndex, replaceSlideIndex}) {
+  moveSlide ({ commit }, { draggingSlideIndex, replaceSlideIndex }) {
     console.info(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
-    commit('moveSlide', {draggingSlideIndex, replaceSlideIndex})
+    commit('moveSlide', { draggingSlideIndex, replaceSlideIndex })
   },
 
-  createText ({commit}) {
+  createText ({ commit }) {
     commit('createText')
   },
 
-  createImage ({commit}) {
+  createImage ({ commit }) {
     const url = window.prompt('Please enter the URL of new image')
     const height = window.prompt('Please enter the height (in pixels)')
     const width = window.prompt('Please enter the width (in pixels)')
@@ -176,54 +179,60 @@ const actions = {
       return null
     }
 
-    commit('createImage', {url, height, width})
+    commit('createImage', { url, height, width })
   },
 
-  inspectElement ({commit}, selectedElementIndex) {
+  inspectElement ({ commit }, selectedElementIndex) {
     commit('setSelectedElementIndex', selectedElementIndex)
   },
 
-  deleteElement ({commit}, selectedElementIndex) {
+  deleteElement ({ commit }, selectedElementIndex) {
     const confirm = window.confirm('Are you sure you want to delete this?')
     if (confirm) {
       commit('deleteElement', selectedElementIndex)
     }
   },
 
-  updateBackgroundColour ({commit}, value) {
+  updateBackgroundColour ({ commit }, value) {
     commit('setBackgroundColour', value)
   },
 
-  updateX ({commit}, {element, value}) {
-    commit('setElementX', {element, value})
+  updateX ({ commit }, { element, value }) {
+    commit('setElementX', { element, value })
   },
 
-  updateY ({commit}, {element, value}) {
-    commit('setElementY', {element, value})
+  updateY ({ commit }, { element, value }) {
+    commit('setElementY', { element, value })
   },
 
-  updateCoordinates ({commit}, {element, x, y}) {
-    commit('setElementCoordinates', {element, x, y})
+  updateCoordinates ({ commit }, { element, x, y }) {
+    commit('setElementCoordinates', { element, x, y })
   },
 
-  updateFontFamily ({commit}, {element, value}) {
-    commit('setElementFontFamily', {element, value})
+  updateFontFamily ({ commit }, { element, value }) {
+    commit('setElementFontFamily', { element, value })
   },
 
-  updateFontSize ({commit}, {element, value}) {
-    commit('setElementFontSize', {element, value})
+  updateFontSize ({ commit }, { element, value }) {
+    commit('setElementFontSize', { element, value })
   },
 
-  updateFill ({commit}, {element, value}) {
-    commit('setElementFill', {element, value})
+  updateFill ({ commit }, { element, value }) {
+    commit('setElementFill', { element, value })
   },
 
-  updateContent ({commit}, {element, value}) {
-    commit('setElementContent', {element, value})
+  updateContent ({ commit }, { element, value }) {
+    commit('setElementContent', { element, value })
   }
 }
 
 const mutations = {
+  initSocket (state, sockObj) {
+    state.socket = sockObj
+  },
+
+  ...socketMutations,
+
   setPresentation (state, presentation) {
     state.presentation = presentation
   },
@@ -292,7 +301,7 @@ const mutations = {
     }
   },
 
-  moveSlide (state, {draggingSlideIndex, replaceSlideIndex}) {
+  moveSlide (state, { draggingSlideIndex, replaceSlideIndex }) {
     if (!state.presentation.slides.length ||
       !state.presentation.slides[draggingSlideIndex] ||
       !state.presentation.slides[replaceSlideIndex]) {
@@ -316,9 +325,10 @@ const mutations = {
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId
+    state.socket.emit('created-element', state.presentation.slides[state.selectedSlideIndex].elements)
   },
 
-  createImage (state, {url, height, width}) {
+  createImage (state, { url, height, width }) {
     if (!state.presentation || !state.presentation.slides[state.selectedSlideIndex]) {
       console.error('Unable to create new image element: no active presentation and/or slide')
       return null
@@ -355,7 +365,7 @@ const mutations = {
     state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
   },
 
-  setElementX (state, {element, value}) {
+  setElementX (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the X coordinate for an element (element was null)')
       return null
@@ -363,7 +373,7 @@ const mutations = {
     element.properties.x = value
   },
 
-  setElementY (state, {element, value}) {
+  setElementY (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the Y coordinate for an element (element was null)')
       return null
@@ -371,7 +381,7 @@ const mutations = {
     element.properties.y = value
   },
 
-  setElementCoordinates (state, {element, x, y}) {
+  setElementCoordinates (state, { element, x, y }) {
     if (!element) {
       console.error('Failed to set coordinates for an element (element was null)')
       return null
@@ -380,7 +390,7 @@ const mutations = {
     element.properties.y = y
   },
 
-  setElementFontFamily (state, {element, value}) {
+  setElementFontFamily (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the font family for an element (element was null)')
       return null
@@ -388,7 +398,7 @@ const mutations = {
     element.properties.fontFamily = value
   },
 
-  setElementFontSize (state, {element, value}) {
+  setElementFontSize (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the font size for an element (element was null)')
       return null
@@ -396,7 +406,7 @@ const mutations = {
     element.properties.fontSize = value
   },
 
-  setElementFill (state, {element, value}) {
+  setElementFill (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the fill for an element (element was null)')
       return null
@@ -404,7 +414,7 @@ const mutations = {
     element.properties.fill = value
   },
 
-  setElementContent (state, {element, value}) {
+  setElementContent (state, { element, value }) {
     if (!element) {
       console.error('Failed to set the content for an element (element was null)')
       return null
