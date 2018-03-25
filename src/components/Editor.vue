@@ -188,7 +188,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import io from 'socket.io-client'
 import socketHandlers from './../assets/socket-handlers'
 
 import SlidesToolbar from './SlidesToolbar.vue'
@@ -208,13 +207,10 @@ export default {
   },
   data () {
     return {
-      loading: true,
-      socket: io('http://localhost:3000')
+      loading: true
     }
   },
   created () {
-    const vm = this
-    socketHandlers(vm, this.socket)
     this.$store.dispatch('editor/fetchPresentation', this.$route.params.presentationId)
       // eslint-disable-next-line
       .then(() => this.loading = false)
@@ -225,7 +221,7 @@ export default {
   },
   computed: {
     ...mapGetters(['current_user', 'is_logged_in']),
-    ...mapGetters('editor', ['presentation', 'slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
+    ...mapGetters('editor', ['socket', 'presentation', 'slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
     computedStyles () {
       return {
         'no-slides': !this.slides || !this.slides.length
@@ -244,6 +240,9 @@ export default {
     }
   },
   mounted () {
+    const vm = this
+    this.initSocket()
+    socketHandlers(vm, this.socket)
   },
   beforeDestroy () {
     this.socket.close()

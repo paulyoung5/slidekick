@@ -1,7 +1,9 @@
 import * as api from '../../api/presentation'
+import io from 'socket.io-client'
 import socketMutations from './socket-mutations'
 
 const state = {
+  socket: null,
   selectedSlideIndex: 0,
   zoomLevel: 1,
   selectedElementIndex: -1,
@@ -67,6 +69,7 @@ const DEFAULT_NEW_IMAGE = JSON.stringify({
 })
 
 const getters = {
+  socket: state => state.socket,
   presentation: state => state.presentation,
   presentationId: state => state.presentation ? state.presentation.id : -1,
   title: state => state.presentation.title,
@@ -92,6 +95,10 @@ const getters = {
 }
 
 const actions = {
+  initSocket ({commit}) {
+    commit('initSocket')
+  },
+
   async fetchPresentation ({ commit }, presentationId) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -228,8 +235,8 @@ const actions = {
 }
 
 const mutations = {
-  initSocket (state, sockObj) {
-    state.socket = sockObj
+  initSocket (state) {
+    state.socket = io('http://localhost:3000')
   },
 
   ...socketMutations,
