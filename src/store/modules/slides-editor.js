@@ -115,7 +115,7 @@ const actions = {
   },
 
   async renamePresentation ({ commit }, { presentationId, socket, newTitle }) {
-    commit('notifyRenamedPresentation', {socket, title: newTitle})
+    commit('notifyRenamedPresentation', {title: newTitle})
     return new Promise(async (resolve, reject) => {
       try {
         if (!newTitle) {
@@ -170,6 +170,10 @@ const actions = {
   moveSlide ({ commit }, { draggingSlideIndex, replaceSlideIndex }) {
     console.info(`dropped slide with index ${draggingSlideIndex} after slide with index ${replaceSlideIndex}`)
     commit('moveSlide', { draggingSlideIndex, replaceSlideIndex })
+  },
+
+  setSlides ({ commit }, slides) {
+    commit('setSlides', slides)
   },
 
   createText ({ commit }, socket) {
@@ -286,6 +290,11 @@ const mutations = {
 
     state.presentation.slides.push(JSON.parse(DEFAULT_NEW_SLIDE))
     state.selectedSlideIndex = state.presentation.slides.length - 1
+
+    state.socket.emit('modified-slides', {
+      presentationId: state.presentation.id,
+      slides: state.presentation.slides
+    })
   },
 
   deleteSlide (state, slideIndex) {
@@ -307,6 +316,11 @@ const mutations = {
         state.selectedSlideIndex = 0
       }
     }
+
+    state.socket.emit('modified-slides', {
+      presentationId: state.presentation.id,
+      slides: state.presentation.slides
+    })
   },
 
   moveSlide (state, { draggingSlideIndex, replaceSlideIndex }) {
@@ -319,6 +333,10 @@ const mutations = {
 
     state.presentation.slides.splice(draggingSlideIndex, 0, state.presentation.slides.splice(replaceSlideIndex, 1)[0])
     state.selectedSlideIndex = replaceSlideIndex
+    state.socket.emit('modified-slides', {
+      presentationId: state.presentation.id,
+      slides: state.presentation.slides
+    })
   },
 
   createText (state) {
