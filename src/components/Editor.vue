@@ -187,7 +187,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import io from 'socket.io-client'
 
 import SlidesToolbar from './SlidesToolbar.vue'
@@ -221,6 +221,7 @@ export default {
       })
   },
   computed: {
+    ...mapGetters(['current_user', 'is_logged_in']),
     ...mapGetters('editor', ['slides', 'selectedSlideIndex', 'selectedElementIndex', 'zoomLevel']),
     computedStyles () {
       return {
@@ -229,6 +230,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('editor', ['updateTitle']),
     inspectElement (index) {
       this.$store.commit('editor/setSelectedElementIndex', index)
     },
@@ -239,16 +241,26 @@ export default {
     }
   },
   mounted () {
+    const vm = this
     this.socket.on('connect', () => {
       console.info('Connected to server socket')
 
       this.socket.emit('joined-room', {
         presentationId: this.$route.params.presentationId,
-        user: {
-          name: 'Ronnie'
-        }
+        user: this.current_user
       })
     })
+
+    this.socket.on('renamed-presentation', ({presentationId, newTitle}) => {
+      vm.updateTitle(newTitle)
+    })
+
+    this.socket.on('reordered-slides', () => {
+      console.info('Received reordered-slides')
+    })
+  },
+  beforeDestroy () {
+    this.socket.close()
   }
 }
 </script>
