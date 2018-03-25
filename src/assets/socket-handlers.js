@@ -18,7 +18,8 @@ export default function (vm, socket) {
     vm.updateTitle(newTitle)
   })
 
-  socket.on('reordered-slides', () => {
-    console.info('Received reordered-slides')
+  socket.on('modified-slides', slides => {
+    console.info('Received a modified-slides event')
+    vm.setSlides(slides)
   })
 }
