@@ -252,7 +252,7 @@ const actions = {
 
 const mutations = {
   initSocket (state) {
-    state.socket = io('http://localhost:3000')
+    state.socket = io('http://slidekick.daniel-waghorn.com:3000')
   },
 
   ...socketMutations,
