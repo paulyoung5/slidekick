@@ -252,7 +252,9 @@ const actions = {
 
 const mutations = {
   initSocket (state) {
-    state.socket = io('https://slidekick.daniel-waghorn.com:3000')
+    var address = window.location.origin
+    address += ':3000'
+    state.socket = io(address)
   },
 
   ...socketMutations,
