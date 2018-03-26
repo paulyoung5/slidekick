@@ -254,7 +254,7 @@ const mutations = {
   initSocket (state) {
     // var address = window.location.origin
     // address += ':3000'
-    var address = 'http://slidekick.daniel-waghorn.com:3000/'
+    var address = 'https://slidekick.daniel-waghorn.com:3000/'
     state.socket = io(address)
   },
 
