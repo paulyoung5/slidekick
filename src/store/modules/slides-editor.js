@@ -9,6 +9,7 @@ const state = {
   zoomLevel: 1,
   selectedElementIndex: -1,
   activeUsers: [],
+  dirty: false,
 
   presentation: {
     id: -1,
@@ -92,7 +93,8 @@ const getters = {
   },
   slides: state => state.presentation ? state.presentation.slides : [],
   zoomLevel: state => state.zoomLevel,
-  activeUsers: state => state.activeUsers
+  activeUsers: state => state.activeUsers,
+  dirty: state => state.dirty
 }
 
 const actions = {
@@ -115,22 +117,13 @@ const actions = {
     })
   },
 
-  async renamePresentation ({ commit }, { presentationId, socket, newTitle }) {
-    commit('notifyRenamedPresentation', {title: newTitle})
+  async savePresentation ({ commit }, {presentation}) {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!newTitle) {
-          return window.alert(`The entered title wasn't valid. Please try again.`)
-        }
-
-        const res = await api.getPresentation(presentationId)
-        const p = JSON.parse(JSON.stringify(res.data.presentation))
-        p.title = newTitle
-
-        return api.savePresentation(p)
+        return api.savePresentation(presentation)
           .then(res => {
             commit('setPresentation', res.data.presentation)
-            console.info('Presentation successfully renamed')
+            console.info('Presentation successfully saved')
             resolve()
           })
           .catch(res => window.alert(res.err.message))
@@ -260,6 +253,11 @@ const mutations = {
 
   ...socketMutations,
 
+  resetDirtyFlag (state) {
+    state.dirty = false
+    console.info('Saved!')
+  },
+
   setPresentation (state, presentation) {
     state.presentation = presentation
   },
@@ -270,6 +268,7 @@ const mutations = {
 
   setSlides (state, slides) {
     state.presentation.slides = slides
+    state.dirty = true
   },
 
   setSelectedSlideIndex (state, selectedIndex) {
@@ -279,6 +278,7 @@ const mutations = {
 
   setElements (state, {slideIndex, elements}) {
     state.presentation.slides[slideIndex].elements = elements
+    state.dirty = true
   },
 
   setUsersList ({commit}, usersList) {
@@ -313,6 +313,7 @@ const mutations = {
 
     state.presentation.slides.push(JSON.parse(DEFAULT_NEW_SLIDE))
     state.selectedSlideIndex = state.presentation.slides.length - 1
+    state.dirty = true
 
     state.socket.emit('modified-slides', {
       presentationId: state.presentation.id,
@@ -339,6 +340,7 @@ const mutations = {
         state.selectedSlideIndex = 0
       }
     }
+    state.dirty = true
 
     state.socket.emit('modified-slides', {
       presentationId: state.presentation.id,
@@ -356,6 +358,7 @@ const mutations = {
 
     state.presentation.slides.splice(draggingSlideIndex, 0, state.presentation.slides.splice(replaceSlideIndex, 1)[0])
     state.selectedSlideIndex = replaceSlideIndex
+    state.dirty = true
     state.socket.emit('modified-slides', {
       presentationId: state.presentation.id,
       slides: state.presentation.slides
@@ -372,6 +375,7 @@ const mutations = {
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -391,6 +395,7 @@ const mutations = {
     newImageElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newImageElement)
     state.selectedElementIndex = newElementId
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -407,6 +412,7 @@ const mutations = {
 
     const slide = state.presentation.slides[state.selectedSlideIndex]
     slide.elements = slide.elements.filter(el => el.id !== selectedElementIndex)
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -419,6 +425,7 @@ const mutations = {
     }
 
     state.presentation.slides[state.selectedSlideIndex].backgroundColour = newBackgroundColour
+    state.dirty = true
     state.socket.emit('changed-slide-background-colour', {
       slideIndex: state.selectedSlideIndex,
       slide: state.presentation.slides[state.selectedSlideIndex]
@@ -426,6 +433,7 @@ const mutations = {
   },
 
   replaceSlide (state, {slideIndex, slide}) {
+    state.dirty = true
     Vue.set(state.presentation.slides, slideIndex, slide)
   },
 
@@ -435,6 +443,7 @@ const mutations = {
       return null
     }
     element.properties.x = value
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -447,6 +456,7 @@ const mutations = {
       return null
     }
     element.properties.y = value
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -460,6 +470,7 @@ const mutations = {
     }
     element.properties.x = x
     element.properties.y = y
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -472,6 +483,7 @@ const mutations = {
       return null
     }
     element.properties.fontFamily = value
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -484,6 +496,7 @@ const mutations = {
       return null
     }
     element.properties.fontSize = value
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -496,6 +509,7 @@ const mutations = {
       return null
     }
     element.properties.fill = value
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements
@@ -508,6 +522,7 @@ const mutations = {
       return null
     }
     element.properties.content = value
+    state.dirty = true
     state.socket.emit('modified-elements', {
       slideIndex: state.selectedSlideIndex,
       elements: state.presentation.slides[state.selectedSlideIndex].elements

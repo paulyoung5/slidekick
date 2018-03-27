@@ -229,7 +229,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('editor', ['initSocket', 'updateTitle', 'setSlides', 'setElements', 'replaceSlide', 'setUsersList']),
+    ...mapActions('editor', ['initSocket', 'updateTitle', 'setSlides', 'setElements', 'replaceSlide', 'setUsersList', 'savePresentation']),
     inspectElement (index) {
       this.$store.commit('editor/setSelectedElementIndex', index)
     },

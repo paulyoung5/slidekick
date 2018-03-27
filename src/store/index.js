@@ -8,13 +8,17 @@ import user from './modules/user'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
-    pageLoading: false
+    pageLoading: false,
+    savingState: null,
+    changeDelayTimer: null
   },
   getters: {
-    pageLoading: state => state.pageLoading
+    pageLoading: state => state.pageLoading,
+    savingState: state => state.savingState,
+    changeDelayTimer: state => state.changeDelayTimer
   },
   actions: {
     setPageLoading ({commit}, pageLoading) {
@@ -24,6 +28,9 @@ export default new Vuex.Store({
   mutations: {
     setPageLoading (state, pageLoading) {
       state.pageLoading = pageLoading
+    },
+    clearTimeout (state) {
+      clearTimeout(state.changeDelayTimer)
     }
   },
   modules: {
@@ -33,3 +40,16 @@ export default new Vuex.Store({
     user: user
   }
 })
+
+store.watch(() => store.getters['editor/dirty'], value => {
+  if (!store.getters['savingState']) {
+    setTimeout(() => {
+      console.info('Saving..')
+      this.savingState = store.dispatch('editor/savePresentation', {
+        presentation: store.getters['editor/presentation']
+      }).then(() => store.commit('editor/resetDirtyFlag'))
+    }, 5000)
+  }
+})
+
+export default store
