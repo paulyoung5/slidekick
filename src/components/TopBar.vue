@@ -13,7 +13,7 @@
   
   display: grid;
   align-content: center;
-  grid-template-columns: 1fr 2fr 1.2fr;
+  grid-template-columns: 1fr 1.7fr 1.5fr;
   grid-template-rows: 60px;
   grid-template-areas: "primary-actions brand secondary-actions";
 }
@@ -204,6 +204,10 @@
           <i class="material-icons">share</i>
           <span>Share</span>
         </a>
+        <a href="#" v-if="editorMode" @click.prevent="doSavePresentation">
+          <i class="material-icons">save</i>
+          <span>Save</span>
+        </a>
         <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode" :disabled="savingState" :class="{ disabled: savingState }">
           <i class="material-icons">play_circle_outline</i>
           <span>Present</span>
@@ -232,7 +236,7 @@ export default {
   },
   computed: {
     ...mapGetters(['pageLoading', 'savingState']),
-    ...mapGetters('editor', ['title', 'presentationId']),
+    ...mapGetters('editor', ['title', 'presentationId', 'presentation']),
     presentationTitle: {
       get () {
         return this.title
@@ -259,7 +263,7 @@ export default {
   },
   methods: {
     ...mapActions(['setPageLoading']),
-    ...mapActions('editor', ['updateTitle', 'renamePresentation']),
+    ...mapActions('editor', ['updateTitle', 'renamePresentation', 'savePresentation']),
     logout () {
       this.$auth.logout()
       this.setPageLoading(true)
@@ -279,6 +283,10 @@ export default {
         presentationId: this.presentationId,
         newTitle: value
       })
+    },
+    doSavePresentation: async function () {
+      await this.savePresentation({ presentation: this.presentation })
+      alert('Presentation Saved')
     }
   }
 }
