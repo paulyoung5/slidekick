@@ -371,7 +371,7 @@ const mutations = {
       return null
     }
     const newTextElement = JSON.parse(DEFAULT_NEW_TEXT)
-    const newElementId = Date.now()
+    const newElementId = window.performance.now()
     newTextElement.id = newElementId
     state.presentation.slides[state.selectedSlideIndex].elements.push(newTextElement)
     state.selectedElementIndex = newElementId

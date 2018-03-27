@@ -204,14 +204,14 @@
           <i class="material-icons">share</i>
           <span>Share</span>
         </a>
-        <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode">
+        <router-link :to="{ name: 'presenter', params: { presentationId: presentationId }}" v-if="editorMode" :disabled="savingState" :class="{ disabled: savingState }">
           <i class="material-icons">play_circle_outline</i>
           <span>Present</span>
         </router-link>
         <a href="#" @click.prevent="logout" v-if="$auth.check()">
           <i class="material-icons">exit_to_app</i>
           <span>Log out</span>
-        </a>
+      </a>
       </div>
     </div>
 </template>
@@ -231,7 +231,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['pageLoading']),
+    ...mapGetters(['pageLoading', 'savingState']),
     ...mapGetters('editor', ['title', 'presentationId']),
     presentationTitle: {
       get () {

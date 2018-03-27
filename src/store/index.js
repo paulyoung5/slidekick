@@ -12,7 +12,7 @@ const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     pageLoading: false,
-    savingState: null,
+    savingState: false,
     changeDelayTimer: null
   },
   getters: {
@@ -29,7 +29,13 @@ const store = new Vuex.Store({
     setPageLoading (state, pageLoading) {
       state.pageLoading = pageLoading
     },
+    setTimeout (state, fn) {
+      state.savingState = true
+      state.changeDelayTimer = setTimeout(fn, 5000)
+    },
     clearTimeout (state) {
+      console.log('Cancelled save event')
+      state.savingState = false
       clearTimeout(state.changeDelayTimer)
     }
   },
@@ -42,13 +48,12 @@ const store = new Vuex.Store({
 })
 
 store.watch(() => store.getters['editor/dirty'], value => {
-  if (!store.getters['savingState']) {
-    setTimeout(() => {
-      console.info('Saving..')
-      this.savingState = store.dispatch('editor/savePresentation', {
-        presentation: store.getters['editor/presentation']
-      }).then(() => store.commit('editor/resetDirtyFlag'))
-    }, 5000)
+  if (!store.getters['savingState'] && store.getters['editor/dirty']) {
+    console.info('Saving..')
+    store.commit('clearTimeout')
+    store.commit('setTimeout', () => store.dispatch('editor/savePresentation', {
+      presentation: store.getters['editor/presentation']
+    }).then(() => store.commit('editor/resetDirtyFlag')))
   }
 })
 
